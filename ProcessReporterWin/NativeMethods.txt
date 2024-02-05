@@ -1,0 +1,11 @@
+SetWindowsHookEx
+UnhookWindowsHookEx
+SetWinEventHook
+UnhookWinEvent
+WinEventDelegate
+GetWindowThreadProcessId
+GetWindowText
+GetWindowTextLength
+GetWindowThreadProcessId
+OpenProcess
+GetModuleBaseNameW

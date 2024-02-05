@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:tb="https://notifyicon.com/"
+             x:Class="ProcessReporterWin.MainPage">
+
+    <Grid>
+        <tb:TaskbarIcon
+            x:Name="ProcessReporter"
+            LeftClickCommand="{Binding ShowWindowCommand}"
+            NoLeftClickDelay="True"
+            >
+            <FlyoutBase.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem Command="{Binding ShowWindowCommand}" Text="显示主程序" />
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem Command="{Binding ExitAppCommand}" Text="退出" />
+                </MenuFlyout>
+            </FlyoutBase.ContextFlyout>
+        </tb:TaskbarIcon>
+        <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Spacing="10">
+            <StackLayout Orientation="Horizontal" Spacing="10">
+                <Label Text="Endpoint" VerticalOptions="CenterAndExpand" WidthRequest="60" />
+                <Entry x:Name="endpointEntry" Placeholder="Endpoint URL" WidthRequest="300" Text="{Binding Endpoint, Mode=TwoWay}" />
+            </StackLayout>
+            <StackLayout Orientation="Horizontal" Spacing="10">
+                <Label Text="API Key" VerticalOptions="CenterAndExpand" WidthRequest="60" />
+                <Entry x:Name="keyEntry" Placeholder="API Key" WidthRequest="300" Text="{Binding ApiKey, Mode=TwoWay}" />
+            </StackLayout>
+            <!--<StackLayout Orientation="Horizontal">
+                <Button x:Name="saveButton" Clicked="saveButton_Clicked" Text="保存" HorizontalOptions="EndAndExpand" />
+            </StackLayout>-->
+        </StackLayout>
+    </Grid>
+</ContentPage>
