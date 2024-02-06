@@ -16,3 +16,8 @@
 - [ ] 网易云支持
 - [ ] 自定义配置保存位置
 - [ ] Log显示（文件 / UI内控制台）
+- [x] 替换规则（Regex）
+- [ ] 过滤规则（Regex）
+
+### NEED FIX
+- [ ] ProcessTraceService会被CLR中断
