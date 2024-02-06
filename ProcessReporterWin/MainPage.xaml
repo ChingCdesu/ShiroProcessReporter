@@ -4,7 +4,7 @@
              xmlns:tb="https://notifyicon.com/"
              x:Class="ProcessReporterWin.MainPage">
 
-    <Grid>
+    <StackLayout>
         <tb:TaskbarIcon
             x:Name="ProcessReporter"
             LeftClickCommand="{Binding ShowWindowCommand}"
@@ -18,18 +18,76 @@
                 </MenuFlyout>
             </FlyoutBase.ContextFlyout>
         </tb:TaskbarIcon>
-        <StackLayout VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" Spacing="10">
-            <StackLayout Orientation="Horizontal" Spacing="10">
-                <Label Text="Endpoint" VerticalOptions="CenterAndExpand" WidthRequest="60" />
-                <Entry x:Name="endpointEntry" Placeholder="Endpoint URL" WidthRequest="300" Text="{Binding Endpoint, Mode=TwoWay}" />
-            </StackLayout>
-            <StackLayout Orientation="Horizontal" Spacing="10">
-                <Label Text="API Key" VerticalOptions="CenterAndExpand" WidthRequest="60" />
-                <Entry x:Name="keyEntry" Placeholder="API Key" WidthRequest="300" Text="{Binding ApiKey, Mode=TwoWay}" />
-            </StackLayout>
-            <!--<StackLayout Orientation="Horizontal">
-                <Button x:Name="saveButton" Clicked="saveButton_Clicked" Text="保存" HorizontalOptions="EndAndExpand" />
-            </StackLayout>-->
+        <StackLayout VerticalOptions="CenterAndExpand" Padding="40">
+            <ScrollView>
+                <StackLayout HorizontalOptions="Center" Spacing="10">
+                    <FlexLayout>
+                        <Label Text="Endpoint" VerticalOptions="Center" FlexLayout.Basis="80" Margin="0,0,10,0" />
+                        <Entry x:Name="endpointEntry" Placeholder="Endpoint URL" FlexLayout.Grow="1" Text="{Binding Endpoint, Mode=TwoWay}" />
+                    </FlexLayout>
+                    <FlexLayout>
+                        <Label Text="API Key" VerticalOptions="Center" FlexLayout.Basis="80" Margin="0,0,10,0" />
+                        <Entry x:Name="keyEntry" Placeholder="API Key" FlexLayout.Grow="1" Text="{Binding ApiKey, Mode=TwoWay}" />
+                    </FlexLayout>
+                    <!--<StackLayout Orientation="Horizontal">
+                        <Button x:Name="saveButton" Clicked="saveButton_Clicked" Text="保存" HorizontalOptions="EndAndExpand" />
+                    </StackLayout>-->
+                    <Label Text="替换规则" />
+                    <Label Text="暂无替换规则" TextColor="Gray" x:Name="ReplaceRuleEmptyTip" HorizontalOptions="Center" />
+                    <CollectionView x:Name="ReplaceRuleList">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout Orientation="Horizontal" Padding="0,0,0,10" Spacing="10">
+                                    <Label
+                                        HorizontalOptions="FillAndExpand"
+                                        VerticalOptions="Center"
+                                        IsVisible="{Binding NotEditing}"
+                                        Text="{Binding Key}" />
+                                    <Entry
+                                        HorizontalOptions="FillAndExpand"
+                                        Placeholder="Enter Key"
+                                        IsVisible="{Binding Editing}"
+                                        Text="{Binding Key, Mode=TwoWay}" />
+                                    <Label
+                                        VerticalOptions="Center"
+                                        Text="→" 
+                                        Padding="10" />
+                                    <Label
+                                        HorizontalOptions="FillAndExpand"
+                                        VerticalOptions="Center"
+                                        IsVisible="{Binding NotEditing}"
+                                        Text="{Binding Value}" />
+                                    <Entry
+                                        HorizontalOptions="FillAndExpand" 
+                                        Placeholder="Enter Value"
+                                        IsVisible="{Binding Editing}"
+                                        Text="{Binding Value, Mode=TwoWay}" />
+                                    
+                                    <Button 
+                                        Text="编辑" 
+                                        IsVisible="{Binding NotEditing}" 
+                                        Command="{Binding Path=BindingContext.EditReplaceRuleCommand, Source={Reference ReplaceRuleList}}" 
+                                        CommandParameter="{Binding .}"/>
+                                    <Button 
+                                        Text="保存" 
+                                        IsVisible="{Binding Editing}" 
+                                        Command="{Binding Path=BindingContext.SaveReplaceRuleCommand, Source={Reference ReplaceRuleList}}" 
+                                        CommandParameter="{Binding .}"/>
+                                    <Button 
+                                        Text="删除" 
+                                        TextColor="White" 
+                                        BackgroundColor="Red" 
+                                        Command="{Binding Path=BindingContext.DeleteReplaceRuleCommand, Source={Reference ReplaceRuleList}}" 
+                                        CommandParameter="{Binding .}"/>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.Footer>
+                            <Button Text="添加" CornerRadius="10" Clicked="AddReplaceRule" />
+                        </CollectionView.Footer>
+                    </CollectionView>
+                </StackLayout>
+            </ScrollView>
         </StackLayout>
-    </Grid>
+    </StackLayout>
 </ContentPage>

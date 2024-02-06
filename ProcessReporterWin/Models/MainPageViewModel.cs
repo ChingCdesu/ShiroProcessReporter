@@ -20,7 +20,11 @@ namespace ProcessReporterWin.Models
 
         private readonly ReportService _reportService;
 
-        public MainPageViewModel(ILogger<MainPageViewModel> logger, ProcessTraceService windowTraceService, MediaTraceService mediaTraceService, ReportService reportService)
+        public MainPageViewModel(
+            ILogger<MainPageViewModel> logger, 
+            ProcessTraceService windowTraceService,
+            MediaTraceService mediaTraceService,
+            ReportService reportService)
         {
             _logger = logger;
             _windowTraceService = windowTraceService;

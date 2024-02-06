@@ -1,6 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Collections;
 using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using Windows.Media.Control;
 
 namespace ProcessReporterWin.Services
@@ -16,6 +20,12 @@ namespace ProcessReporterWin.Services
         private readonly string IdApiKey = "api_key";
         private readonly string ApiKeyDefault = string.Empty;
 
+        private readonly string IdReplaceRules = "replace_rules";
+        private readonly Dictionary<string, string> ReplaceRulesDefault = new();
+
+        private readonly string IdFilterRules = "filter_rules";
+        private readonly List<string> FilterRulesDefault = new();
+
         public string Endpoint
         {
             get => Preferences.Get(IdEndpoint, EndpointDefault);
@@ -26,6 +36,18 @@ namespace ProcessReporterWin.Services
         {
             get => Preferences.Get(IdApiKey, ApiKeyDefault);
             set => Preferences.Set(IdApiKey, value);
+        }
+
+        public Dictionary<string, string> ReplaceRules
+        {
+            get => JsonSerializer.Deserialize<Dictionary<string, string>>(Preferences.Get(IdReplaceRules, "{}")) ?? ReplaceRulesDefault;
+            set => Preferences.Set(IdReplaceRules, JsonSerializer.Serialize(value));
+        }
+
+        public List<string> FilterRules
+        {
+            get => JsonSerializer.Deserialize<List<string>>(Preferences.Get(IdFilterRules, "[]")) ?? FilterRulesDefault;
+            set => Preferences.Set(IdFilterRules, JsonSerializer.Serialize(value));
         }
 
         private readonly ILogger<ReportService> _logger;
@@ -43,6 +65,13 @@ namespace ProcessReporterWin.Services
                 Timeout = TimeSpan.FromSeconds(5),
             };
             httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
+
+            foreach (var rule in ReplaceRules)
+            {
+                var regex = new Regex(Regex.Unescape(rule.Key));
+                processName = regex.Replace(processName, rule.Value);
+            }
+
             try
             {
                 var response = await httpClient.PostAsJsonAsync(Endpoint, new Dictionary<string, object>
@@ -108,6 +137,13 @@ namespace ProcessReporterWin.Services
                 Timeout = TimeSpan.FromSeconds(5),
             };
             httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
+
+            foreach (var rule in ReplaceRules)
+            {
+                var regex = new Regex(Regex.Unescape(rule.Key));
+                processName = regex.Replace(processName, rule.Value);
+            }
+
             try
             {
                 var response = await httpClient.PostAsJsonAsync(Endpoint, new Dictionary<string, object>
