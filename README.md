@@ -18,6 +18,3 @@
 - [ ] Log显示（文件 / UI内控制台）
 - [x] 替换规则（Regex）
 - [ ] 过滤规则（Regex）
-
-### NEED FIX
-- [ ] ProcessTraceService会被CLR中断
