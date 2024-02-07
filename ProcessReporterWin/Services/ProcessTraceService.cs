@@ -28,12 +28,11 @@ public class ProcessTraceService
     {
         _logger = logger;
         SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
-        var callback = new WINEVENTPROC(OnFrontWindowChange);
         _hookHandle = SetWinEventHook(
             EVENT_SYSTEM_FOREGROUND, 
             EVENT_SYSTEM_FOREGROUND, 
-            HMODULE.Null, 
-            callback,
+            HMODULE.Null,
+            OnFrontWindowChange,
             0, 0,
             WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
 
