@@ -27,7 +27,7 @@ public class ProcessTraceService
     public ProcessTraceService(ILogger<ProcessTraceService> logger)
     {
         _logger = logger;
-        SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
+
         _hookHandle = SetWinEventHook(
             EVENT_SYSTEM_FOREGROUND, 
             EVENT_SYSTEM_FOREGROUND, 
