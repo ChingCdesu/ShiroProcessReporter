@@ -38,13 +38,13 @@ namespace ProcessReporterWin.Models
         private void OnFrontWindowChanged(string windowTitle, string processName)
         {
             _logger.LogInformation("Working on {title} - {process}", windowTitle, processName);
-            _reportService.ReportProcess(windowTitle, processName.Replace(".exe", ""));
+            _reportService.ReportProcess(windowTitle, processName);
         }
 
         private void OnMediaPlaybackChanged(GlobalSystemMediaTransportControlsSessionMediaProperties properties, GlobalSystemMediaTransportControlsSessionPlaybackStatus status, string processName)
         {
             _logger.LogInformation("Now Playing: {Artist} - {Title} => {status}", properties.Artist, properties.Title, status);
-            _reportService.ReportMedia(properties, status, processName.Replace(".exe", ""));
+            _reportService.ReportMedia(properties, status, processName);
         }
     }
 }

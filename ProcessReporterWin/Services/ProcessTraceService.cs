@@ -6,11 +6,17 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Win32.SafeHandles;
 using Windows.Win32.System.Threading;
 
+using static Windows.Win32.PInvoke;
+using System.Diagnostics;
+using System.Buffers;
+
 namespace ProcessReporterWin.Services;
+
+// Reference: https://github.com/walterlv/Walterlv.ForegroundWindowMonitor
 
 public class ProcessTraceService
 {
-    private UnhookWinEventSafeHandle? _hookHandle = null;
+    private HWINEVENTHOOK _hookHandle;
 
     private readonly ILogger<ProcessTraceService> _logger;
 
@@ -23,85 +29,64 @@ public class ProcessTraceService
         _logger = logger;
         SafeHandle handle = new SafeFileHandle(IntPtr.Zero, true);
         var callback = new WINEVENTPROC(OnFrontWindowChange);
-        _hookHandle = PInvoke.SetWinEventHook(0x0003 /* EVENT_SYSTEM_FOREGROUND */, 0x0003 /* EVENT_SYSTEM_FOREGROUND */, handle, callback, 0, 0, 0);
+        _hookHandle = SetWinEventHook(
+            EVENT_SYSTEM_FOREGROUND, 
+            EVENT_SYSTEM_FOREGROUND, 
+            HMODULE.Null, 
+            callback,
+            0, 0,
+            WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
+
+        // 开启消息循环，以便 WinEventProc 能够被调用。
+        if (GetMessage(out var lpMsg, default, default, default))
+        {
+            TranslateMessage(in lpMsg);
+            DispatchMessage(in lpMsg);
+        }
     }
 
     ~ProcessTraceService()
     {
-        if (_hookHandle != null)
-        {
-            _hookHandle.Dispose();
-            _hookHandle = null;
-        }
+        UnhookWinEvent(_hookHandle);
     }
 
-    private unsafe void OnFrontWindowChange(HWINEVENTHOOK eventHook, uint @event, HWND hwnd, int idObject, int idChild, uint idEventThread, uint dwmsEventTime)
+    private void OnFrontWindowChange(HWINEVENTHOOK eventHook, uint @event, HWND hwnd, int idObject, int idChild, uint idEventThread, uint dwmsEventTime)
     {
-        if (hwnd == IntPtr.Zero)
-        {
-            _logger.LogError("Front window handle is null");
-            return;
-        }
+        var currentWindow = GetForegroundWindow();
 
-        var length = PInvoke.GetWindowTextLength(hwnd);
-        if (length <= 0)
-        {
-            _logger.LogError("Failed to get window title length");
-            return;
-        }
+        var processId = GetProcessIdCore(currentWindow);
 
-        var windowTitlePtr = Marshal.AllocHGlobal(255);
-        if (PInvoke.GetWindowText(hwnd, (char*)windowTitlePtr.ToPointer(), 255) <= 0)
-        {
-            _logger.LogError("Failed to get window title");
-            Marshal.FreeHGlobal(windowTitlePtr);
-            return;
-        }
+        var processName = Process.GetProcessById((int)processId).ProcessName;
 
-        var windowTitle = Marshal.PtrToStringAuto(windowTitlePtr);
-        if (windowTitle is null)
-        {
-            _logger.LogError("WindowTitle is null");
-            Marshal.FreeHGlobal(windowTitlePtr);
-            return;
-        }
-        _logger.LogInformation("Front window changed to {WindowTitle}", windowTitle);
-        Marshal.FreeHGlobal(windowTitlePtr);
+        var windowTitle = CallWin32ToGetPWSTR(512, (p, l) => GetWindowText(currentWindow, p, l));
 
-        var processIdPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(uint)));
-        if (PInvoke.GetWindowThreadProcessId(hwnd, (uint*)processIdPtr.ToPointer()) == 0)
-        {
-            _logger.LogError("Failed to get process ID");
-            Marshal.FreeHGlobal(processIdPtr);
-            return;
-        }
-        var processId = (uint)Marshal.ReadInt32(processIdPtr);
-        Marshal.FreeHGlobal(processIdPtr);
-
-        var processHandle = PInvoke.OpenProcess_SafeHandle(PROCESS_ACCESS_RIGHTS.PROCESS_QUERY_INFORMATION | PROCESS_ACCESS_RIGHTS.PROCESS_VM_READ, false, processId);
-        if (processHandle.IsInvalid)
-        {
-            _logger.LogError("Failed to get process handle");
-            processHandle.Close();
-            return;
-        }
-        var processNamePtr = Marshal.AllocHGlobal(1024);
-        PInvoke.GetModuleBaseName(processHandle, null, (char*)processNamePtr.ToPointer(), 1024);
-        processHandle.Close();
-
-        var processName = Marshal.PtrToStringAuto(processNamePtr);
-        if (processName is null)
-        {
-            _logger.LogError("ProcessName is null");
-            Marshal.FreeHGlobal(processNamePtr);
-            return;
-        }
-
-        _logger.LogInformation("ProcessName is {ProcessName}", processName);
-        Marshal.FreeHGlobal(processNamePtr);
         if (OnFrontWindowChanged is not null)
         {
             OnFrontWindowChanged(windowTitle, processName);
+        }
+    }
+
+    private unsafe uint GetProcessIdCore(HWND hWnd)
+    {
+        uint pid = 0;
+        GetWindowThreadProcessId(hWnd, &pid);
+        return pid;
+    }
+
+    private unsafe string CallWin32ToGetPWSTR(int bufferLength, Func<PWSTR, int, int> getter)
+    {
+        var buffer = ArrayPool<char>.Shared.Rent(bufferLength);
+        try
+        {
+            fixed (char* ptr = buffer)
+            {
+                getter(ptr, bufferLength);
+                return new string(buffer, 0, Array.IndexOf(buffer, '\0'));
+            }
+        }
+        finally
+        {
+            ArrayPool<char>.Shared.Return(buffer);
         }
     }
 }
