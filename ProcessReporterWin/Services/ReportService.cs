@@ -26,6 +26,27 @@ namespace ProcessReporterWin.Services
         private readonly string IdFilterRules = "filter_rules";
         private readonly List<string> FilterRulesDefault = new();
 
+        private readonly Dictionary<string, string> BuiltinReplaceRules = new Dictionary<string, string>
+        {
+            { @"\.[Ee][Xx][Ee]", "" }, // 删除exe后缀
+            
+            { "[Ee]xplorer", "explorer" },
+
+            { "msedge", "Microsoft Edge" },
+            { "WINWORD", "Microsoft Word" },
+            { "EXCEL", "Microsoft Excel" },
+            { "POWERPNT", "Microsoft PowerPoint" },
+            { "ONENOTE", "Microsoft OneNote" },
+
+            { "idea64", "IntelliJ IDEA" },
+            { "goland64", "GoLand" },
+            { "pycharm64", "PyCharm" },
+            
+            { "GitHubDesktop", "GitHub Desktop" },
+            { "chrome", "Chrome" },
+        };
+
+
         public string Endpoint
         {
             get => Preferences.Get(IdEndpoint, EndpointDefault);
@@ -52,6 +73,14 @@ namespace ProcessReporterWin.Services
 
         private readonly ILogger<ReportService> _logger;
 
+        private Dictionary<string, string> MergedReplaceRules
+        {
+            get => BuiltinReplaceRules
+                .Where(pair => !ReplaceRules.ContainsKey(pair.Key))
+                .Concat(ReplaceRules)
+                .ToDictionary(pair => pair.Key, pair => pair.Value);
+        }
+
         public ReportService(ILogger<ReportService> logger)
         {
             _logger = logger;
@@ -66,7 +95,7 @@ namespace ProcessReporterWin.Services
             };
             httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
 
-            foreach (var rule in ReplaceRules)
+            foreach (var rule in MergedReplaceRules)
             {
                 var regex = new Regex(Regex.Unescape(rule.Key));
                 processName = regex.Replace(processName, rule.Value);
@@ -137,8 +166,7 @@ namespace ProcessReporterWin.Services
                 Timeout = TimeSpan.FromSeconds(5),
             };
             httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
-
-            foreach (var rule in ReplaceRules)
+            foreach (var rule in MergedReplaceRules)
             {
                 var regex = new Regex(Regex.Unescape(rule.Key));
                 processName = regex.Replace(processName, rule.Value);
