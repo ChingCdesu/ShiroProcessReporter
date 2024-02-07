@@ -1,14 +1,11 @@
-﻿using System.Runtime.InteropServices;
-using Windows.Win32;
-using Windows.Win32.Foundation;
+﻿using Windows.Win32.Foundation;
 using Windows.Win32.UI.Accessibility;
 using Microsoft.Extensions.Logging;
-using Microsoft.Win32.SafeHandles;
-using Windows.Win32.System.Threading;
 
 using static Windows.Win32.PInvoke;
 using System.Diagnostics;
 using System.Buffers;
+using ProcessReporterWin.Helper;
 
 namespace ProcessReporterWin.Services;
 
@@ -49,7 +46,7 @@ public class ProcessTraceService
         UnhookWinEvent(_hookHandle);
     }
 
-    private void OnFrontWindowChange(HWINEVENTHOOK eventHook, uint @event, HWND hwnd, int idObject, int idChild, uint idEventThread, uint dwmsEventTime)
+    private static void OnFrontWindowChange(HWINEVENTHOOK eventHook, uint @event, HWND hwnd, int idObject, int idChild, uint idEventThread, uint dwmsEventTime)
     {
         var currentWindow = GetForegroundWindow();
 
@@ -59,20 +56,22 @@ public class ProcessTraceService
 
         var windowTitle = CallWin32ToGetPWSTR(512, (p, l) => GetWindowText(currentWindow, p, l));
 
-        if (OnFrontWindowChanged is not null)
+        var service = ServiceHelper.GetService<ProcessTraceService>();
+
+        if (service?.OnFrontWindowChanged is not null)
         {
-            OnFrontWindowChanged(windowTitle, processName);
+            service.OnFrontWindowChanged(windowTitle, processName);
         }
     }
 
-    private unsafe uint GetProcessIdCore(HWND hWnd)
+    private static unsafe uint GetProcessIdCore(HWND hWnd)
     {
         uint pid = 0;
         GetWindowThreadProcessId(hWnd, &pid);
         return pid;
     }
 
-    private unsafe string CallWin32ToGetPWSTR(int bufferLength, Func<PWSTR, int, int> getter)
+    private static unsafe string CallWin32ToGetPWSTR(int bufferLength, Func<PWSTR, int, int> getter)
     {
         var buffer = ArrayPool<char>.Shared.Rent(bufferLength);
         try

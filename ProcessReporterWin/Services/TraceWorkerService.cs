@@ -8,31 +8,31 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Media.Control;
 
-namespace ProcessReporterWin.Models
+namespace ProcessReporterWin.Services
 {
-    public class MainPageViewModel
+    public class TraceWorkerService
     {
-        private readonly ILogger<MainPageViewModel> _logger;
+        private readonly ILogger<TraceWorkerService> _logger;
 
-        private readonly ProcessTraceService _windowTraceService;
+        private readonly ProcessTraceService _processTraceService;
 
         private readonly MediaTraceService _mediaTraceService;
 
         private readonly ReportService _reportService;
 
-        public MainPageViewModel(
-            ILogger<MainPageViewModel> logger, 
-            ProcessTraceService windowTraceService,
+        public TraceWorkerService(
+            ILogger<TraceWorkerService> logger, 
+            ProcessTraceService processTraceService,
             MediaTraceService mediaTraceService,
             ReportService reportService)
         {
             _logger = logger;
-            _windowTraceService = windowTraceService;
+            _processTraceService = processTraceService;
             _mediaTraceService = mediaTraceService;
             _reportService = reportService;
 
             _mediaTraceService.OnMediaPlaybackChanged += OnMediaPlaybackChanged;
-            _windowTraceService.OnFrontWindowChanged += OnFrontWindowChanged;
+            _processTraceService.OnFrontWindowChanged += OnFrontWindowChanged;
         }
 
         private void OnFrontWindowChanged(string windowTitle, string processName)
@@ -48,4 +48,3 @@ namespace ProcessReporterWin.Models
         }
     }
 }
-

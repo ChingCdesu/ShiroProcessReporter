@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
-using Microsoft.Maui.Controls;
-using ProcessReporterWin.Models;
+using ProcessReporterWin.Helper;
 using ProcessReporterWin.Services;
 
 namespace ProcessReporterWin
@@ -36,9 +35,9 @@ namespace ProcessReporterWin
             builder.Services.AddSingleton<ProcessTraceService>();
             builder.Services.AddSingleton<MediaTraceService>();
             builder.Services.AddSingleton<ReportService>();
-
-            builder.Services.AddSingleton<MainPageViewModel>();
-            builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddSingleton<TraceWorkerService>();
+                        
+            builder.Services.AddTransient<MainPage>();
 
             builder
                 .UseMauiApp<App>()
@@ -52,7 +51,11 @@ namespace ProcessReporterWin
     		builder.Logging.AddDebug().AddConsole();
 #endif
 
-            return builder.Build();
+            var app = builder.Build();
+
+            ServiceHelper.Initialize(app.Services);
+
+            return app;
         }
     }
 }

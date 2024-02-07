@@ -1,6 +1,5 @@
 ﻿using H.NotifyIcon;
 using Microsoft.Windows.AppNotifications;
-using ProcessReporterWin.Models;
 using ProcessReporterWin.Services;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections;
@@ -12,8 +11,8 @@ namespace ProcessReporterWin
 {
     public partial class MainPage : ContentPage
     {
-        private MainPageViewModel _viewModel;
-
+        private readonly TraceWorkerService _traceWorkerService;
+        
         private readonly ReportService _reportService;
 
         public bool HidePassword { get; set; } = false;
@@ -34,13 +33,13 @@ namespace ProcessReporterWin
         public ICommand SaveReplaceRuleCommand => new Command<ReplaceRule>(SaveReplaceRule);
         public ICommand DeleteReplaceRuleCommand => new Command<ReplaceRule>(DeleteReplaceRule);
 
-        public MainPage(MainPageViewModel viewModel, ReportService reportService)
+        public MainPage(TraceWorkerService traceWorkerService, ReportService reportService)
         {
             InitializeComponent();
 
             _reportService = reportService;
-            _viewModel = viewModel;
-
+            _traceWorkerService = traceWorkerService;
+            
             BindingContext = this;
 
             _replaceRules = new ObservableCollection<ReplaceRule>(

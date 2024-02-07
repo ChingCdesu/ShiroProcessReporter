@@ -41,7 +41,7 @@ namespace ProcessReporterWin.Services
             { "idea64", "IntelliJ IDEA" },
             { "goland64", "GoLand" },
             { "pycharm64", "PyCharm" },
-            
+
             { "GitHubDesktop", "GitHub Desktop" },
             { "chrome", "Chrome" },
         };
@@ -71,8 +71,6 @@ namespace ProcessReporterWin.Services
             set => Preferences.Set(IdFilterRules, JsonSerializer.Serialize(value));
         }
 
-        private readonly ILogger<ReportService> _logger;
-
         private Dictionary<string, string> MergedReplaceRules
         {
             get => BuiltinReplaceRules
@@ -81,19 +79,21 @@ namespace ProcessReporterWin.Services
                 .ToDictionary(pair => pair.Key, pair => pair.Value);
         }
 
+        private readonly ILogger<ReportService> _logger;
+        private readonly HttpClient _httpClient = new()
+        {
+            Timeout = TimeSpan.FromSeconds(5),
+        };
+
         public ReportService(ILogger<ReportService> logger)
         {
             _logger = logger;
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
         }
 
         public async void ReportProcess(string windowTitle, string processName)
         {
             long timeStamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            var httpClient = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(5),
-            };
-            httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
 
             foreach (var rule in MergedReplaceRules)
             {
@@ -103,7 +103,7 @@ namespace ProcessReporterWin.Services
 
             try
             {
-                var response = await httpClient.PostAsJsonAsync(Endpoint, new Dictionary<string, object>
+                var response = await _httpClient.PostAsJsonAsync(Endpoint, new Dictionary<string, object>
                 {
                     { "timestamp", timeStamp },
                     { "process", processName },
@@ -113,21 +113,25 @@ namespace ProcessReporterWin.Services
 
                 response.EnsureSuccessStatusCode();
 
-                var data = await response.Content.ReadFromJsonAsync<Dictionary<string, JsonElement>>();
+                var dataStr = await response.Content.ReadAsStringAsync();
 
-                if (data is null)
+                response.Dispose();
+
+                if (string.IsNullOrEmpty(dataStr))
                 {
                     throw new Exception("Api server return empty content");
                 }
 
+                var data = JsonSerializer.Deserialize<Dictionary<string, object>>(dataStr) ?? throw new Exception("Invaild response");
+
                 if (data.TryGetValue("ok", out var eOk))
                 {
-                    var ok = eOk.GetInt32();
+                    var ok = ((JsonElement?)eOk).Value.GetInt32();
                     if (ok == 0)
                     {
                         if (data.TryGetValue("message", out var eMsg))
                         {
-                            var msg = eMsg.ToString();
+                            var msg = ((JsonElement?)eMsg).Value.GetString();
                             throw new Exception(msg);
                         }
                     }
@@ -161,11 +165,7 @@ namespace ProcessReporterWin.Services
             }
 
             long timeStamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-            var httpClient = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(5),
-            };
-            httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
+
             foreach (var rule in MergedReplaceRules)
             {
                 var regex = new Regex(Regex.Unescape(rule.Key));
@@ -174,7 +174,7 @@ namespace ProcessReporterWin.Services
 
             try
             {
-                var response = await httpClient.PostAsJsonAsync(Endpoint, new Dictionary<string, object>
+                var response = await _httpClient.PostAsJsonAsync(Endpoint, new Dictionary<string, object>
                 {
                     { "timestamp", timeStamp },
                     { "process", processName },
@@ -188,21 +188,25 @@ namespace ProcessReporterWin.Services
 
                 response.EnsureSuccessStatusCode();
 
-                var data = await response.Content.ReadFromJsonAsync<Dictionary<string, JsonElement>>();
+                var dataStr = await response.Content.ReadAsStringAsync();
 
-                if (data is null)
+                response.Dispose();
+
+                if (string.IsNullOrEmpty(dataStr))
                 {
                     throw new Exception("Api server return empty content");
                 }
 
-                if (data.TryGetValue("ok", out var ook))
+                var data = JsonSerializer.Deserialize<Dictionary<string, object>>(dataStr) ?? throw new Exception("Invaild response");
+
+                if (data.TryGetValue("ok", out var eOk))
                 {
-                    var ok = ook.GetInt32();
+                    var ok = ((JsonElement?)eOk).Value.GetInt32();
                     if (ok == 0)
                     {
-                        if (data.TryGetValue("message", out var omsg))
+                        if (data.TryGetValue("message", out var eMsg))
                         {
-                            var msg = omsg.ToString();
+                            var msg = ((JsonElement?)eMsg).Value.GetString();
                             throw new Exception(msg);
                         }
                     }
