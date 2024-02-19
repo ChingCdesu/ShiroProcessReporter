@@ -29,9 +29,25 @@ namespace ProcessReporterWin
             get => _replaceRules is null || _replaceRules.Count == 0;
         }
 
+        private ObservableCollection<FilterRule> _filterRules;
+
+        public ObservableCollection<FilterRule> FilterRules
+        {
+            get => _filterRules;
+        }
+
+        public bool NoFilterRule
+        {
+            get => _filterRules is null || _filterRules.Count == 0;
+        }
+
         public ICommand EditReplaceRuleCommand => new Command<ReplaceRule>(EditReplaceRule);
         public ICommand SaveReplaceRuleCommand => new Command<ReplaceRule>(SaveReplaceRule);
         public ICommand DeleteReplaceRuleCommand => new Command<ReplaceRule>(DeleteReplaceRule);
+
+        public ICommand EditFilterRuleCommand => new Command<FilterRule>(EditFilterRule);
+        public ICommand SaveFilterRuleCommand => new Command<FilterRule>(SaveFilterRule);
+        public ICommand DeleteFilterRuleCommand => new Command<FilterRule>(DeleteFilterRule);
 
         public MainPage(TraceWorkerService traceWorkerService, ReportService reportService)
         {
@@ -48,11 +64,20 @@ namespace ProcessReporterWin
                     Key = x.Key,
                     Value = x.Value,
                     Editing = false,
-                }).ToList());
+                }));
 
             ReplaceRuleList.ItemsSource = ReplaceRules;
-
             ReplaceRuleEmptyTip.IsVisible = NoReplaceRule;
+
+            _filterRules = new ObservableCollection<FilterRule>(
+                _reportService.FilterRules.Select(x => new FilterRule
+                {
+                    KeyWord = x,
+                    Editing = false,
+                }));
+
+            FilterRuleList.ItemsSource = FilterRules;
+            FilterRuleEmptyTip.IsVisible = NoFilterRule;
         }
 
         protected override void OnAppearing()
@@ -152,6 +177,69 @@ namespace ProcessReporterWin
                 rules.Add(item.Key, item.Value);
             }
             this._reportService.ReplaceRules = rules;
+        }
+
+        public void AddFilterRule(object sender, EventArgs args)
+        {
+            Dispatcher.Dispatch(() =>
+            {
+                this._filterRules.Add(new FilterRule { Editing = true });
+                FilterRuleEmptyTip.IsVisible = NoFilterRule;
+            });
+        }
+
+        public void DeleteFilterRule(FilterRule rule)
+        {
+            Dispatcher.Dispatch(() =>
+            {
+                this._filterRules.Remove(rule);
+
+                SaveFilterRuleToPreference();
+                FilterRuleEmptyTip.IsVisible = NoFilterRule;
+            });
+        }
+
+        public void SaveFilterRule(FilterRule rule)
+        {
+            Dispatcher.Dispatch(() =>
+            {
+                var index = -1;
+                // 删除当前正在编辑的和之前的
+                while (this._filterRules.Any(r => r.KeyWord == rule.KeyWord))
+                {
+                    var old = this._filterRules.First(r => r.KeyWord == rule.KeyWord);
+                    var i = this._filterRules.IndexOf(old);
+                    if (index == -1)
+                    {
+                        index = i;
+                    }
+                    this._filterRules.Remove(old);
+                }
+
+                rule.Editing = false;
+                this._filterRules.Insert(index, rule);
+
+                SaveFilterRuleToPreference();
+                FilterRuleEmptyTip.IsVisible = NoFilterRule;
+            });
+        }
+
+        public void EditFilterRule(FilterRule rule)
+        {
+            Dispatcher.Dispatch(() =>
+            {
+                var old = this._filterRules.First(r => r.KeyWord == rule.KeyWord);
+                var index = this._filterRules.IndexOf(old);
+                this._filterRules.Remove(old);
+
+                rule.Editing = true;
+                this._filterRules.Insert(index, rule);
+            });
+        }
+
+        private void SaveFilterRuleToPreference()
+        {
+            this._reportService.FilterRules = this._filterRules.Select(x => x.KeyWord).ToList();
         }
     }
 }

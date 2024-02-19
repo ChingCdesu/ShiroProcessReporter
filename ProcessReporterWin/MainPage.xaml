@@ -19,8 +19,8 @@
                 </MenuFlyout>
             </FlyoutBase.ContextFlyout>
         </tb:TaskbarIcon>
-        <StackLayout VerticalOptions="CenterAndExpand" Padding="40">
-            <ScrollView>
+        <StackLayout VerticalOptions="CenterAndExpand" Padding="40, 20">
+            <ScrollView VerticalOptions="FillAndExpand">
                 <StackLayout HorizontalOptions="Center" Spacing="10">
                     <FlexLayout>
                         <Label Text="Endpoint" VerticalOptions="Center" FlexLayout.Basis="80" Margin="0,0,10,0" />
@@ -85,6 +85,48 @@
                         </CollectionView.ItemTemplate>
                         <CollectionView.Footer>
                             <Button Text="添加" CornerRadius="10" Clicked="AddReplaceRule" />
+                        </CollectionView.Footer>
+                    </CollectionView>
+
+                    <Label Text="过滤规则" />
+                    <Label Text="暂无过滤规则" TextColor="Gray" x:Name="FilterRuleEmptyTip" HorizontalOptions="Center" />
+
+                    <CollectionView x:Name="FilterRuleList">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout Orientation="Horizontal" Padding="0,0,0,10" Spacing="10">
+                                    <Label
+                                        HorizontalOptions="FillAndExpand"
+                                        VerticalOptions="Center"
+                                        IsVisible="{Binding NotEditing}"
+                                        Text="{Binding KeyWord}" />
+                                    <Entry
+                                        HorizontalOptions="FillAndExpand" 
+                                        Placeholder="Enter Value"
+                                        IsVisible="{Binding Editing}"
+                                        Text="{Binding KeyWord, Mode=TwoWay}" />
+
+                                    <Button 
+                                        Text="编辑" 
+                                        IsVisible="{Binding NotEditing}" 
+                                        Command="{Binding Path=BindingContext.EditFilterRuleCommand, Source={Reference FilterRuleList}}" 
+                                        CommandParameter="{Binding .}"/>
+                                    <Button 
+                                        Text="保存" 
+                                        IsVisible="{Binding Editing}" 
+                                        Command="{Binding Path=BindingContext.SaveFilterRuleCommand, Source={Reference FilterRuleList}}" 
+                                        CommandParameter="{Binding .}"/>
+                                    <Button 
+                                        Text="删除" 
+                                        TextColor="White" 
+                                        BackgroundColor="Red" 
+                                        Command="{Binding Path=BindingContext.DeleteFilterRuleCommand, Source={Reference FilterRuleList}}" 
+                                        CommandParameter="{Binding .}"/>
+                                </StackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                        <CollectionView.Footer>
+                            <Button Text="添加" CornerRadius="10" Clicked="AddFilterRule" />
                         </CollectionView.Footer>
                     </CollectionView>
                 </StackLayout>

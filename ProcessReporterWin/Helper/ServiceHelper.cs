@@ -8,6 +8,5 @@
             Services = serviceProvider;
 
         public static T? GetService<T>() => Services.GetService<T>();
-
     }
 }
