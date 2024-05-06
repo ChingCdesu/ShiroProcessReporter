@@ -21,16 +21,6 @@ public partial class SideBar : ContentPage
 
         BindingContext = this;
     }
-
-    private void ToReporter(object? sender, EventArgs e)
-    {
-        Shell.Current.GoToAsync("//reporter");
-    }
-    
-    private void ToApplication(object? sender, EventArgs e)
-    {
-        Shell.Current.GoToAsync("//application");
-    }
     
     [RelayCommand]
     private void ShowWindow()

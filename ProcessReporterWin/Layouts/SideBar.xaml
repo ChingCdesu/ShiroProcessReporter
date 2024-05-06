@@ -21,7 +21,7 @@
             </CollectionView.ItemsSource>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="helper:SideBarItem">
-                    <Label Text="{Binding Title}" HorizontalTextAlignment="Center" />
+                    <Button Text="{Binding Title}" />
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
