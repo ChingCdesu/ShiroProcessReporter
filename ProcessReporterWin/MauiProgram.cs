@@ -1,61 +1,64 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Maui.LifecycleEvents;
+using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using ProcessReporterWin.Helper;
+using ProcessReporterWin.Layouts;
 using ProcessReporterWin.Services;
+using WinRT.Interop;
 
-namespace ProcessReporterWin
+namespace ProcessReporterWin;
+
+public static class MauiProgram
 {
-    public static class MauiProgram
+    public static MauiApp CreateMauiApp()
     {
-        public static MauiApp CreateMauiApp()
+        var builder = MauiApp.CreateBuilder();
+
+        builder.ConfigureLifecycleEvents(lifecycle =>
         {
-            var builder = MauiApp.CreateBuilder();
-
-            builder.ConfigureLifecycleEvents(lifecycle =>
+            lifecycle.AddWindows(windows =>
             {
-                lifecycle.AddWindows(windows =>
+                windows.OnWindowCreated(window =>
                 {
-                    windows.OnWindowCreated(window =>
+                    var handle = WindowNative.GetWindowHandle(window);
+                    var id = Win32Interop.GetWindowIdFromWindow(handle);
+
+                    var appWindow = AppWindow.GetFromWindowId(id);
+
+                    appWindow.Closing += (_, e) =>
                     {
-                        var handle = WinRT.Interop.WindowNative.GetWindowHandle(window);
-                        var id = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(handle);
-
-                        var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(id);
-
-                        appWindow.Closing += (_, e) =>
-                        {
-                            // 按关闭按钮最小化到托盘
-                            e.Cancel = true;
-                            appWindow.Hide();
-                        };
-                    });
+                        // 按关闭按钮最小化到托盘
+                        e.Cancel = true;
+                        appWindow.Hide();
+                    };
                 });
             });
+        });
 
-            builder.Services.AddSingleton<ProcessTraceService>();
-            builder.Services.AddSingleton<MediaTraceService>();
-            builder.Services.AddSingleton<ReportService>();
-            builder.Services.AddSingleton<TraceWorkerService>();
-                        
-            builder.Services.AddTransient<MainPage>();
+        builder.Services.AddSingleton<ProcessTraceService>();
+        builder.Services.AddSingleton<MediaTraceService>();
+        builder.Services.AddSingleton<ReportService>();
+        builder.Services.AddSingleton<TraceWorkerService>();
 
-            builder
-                .UseMauiApp<App>()
-                .ConfigureFonts(fonts =>
-                {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                });
+        builder.Services.AddTransient<Main>();
+
+        builder
+            .UseMauiApp<App>()
+            .ConfigureFonts(fonts =>
+            {
+                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+            });
 
 #if DEBUG
-    		builder.Logging.AddDebug().AddConsole();
+        builder.Logging.AddDebug().AddConsole();
 #endif
 
-            var app = builder.Build();
+        var app = builder.Build();
 
-            ServiceHelper.Initialize(app.Services);
+        ServiceHelper.Initialize(app.Services);
 
-            return app;
-        }
+        return app;
     }
 }

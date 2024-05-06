@@ -1,11 +1,10 @@
-﻿using Windows.Win32.Foundation;
+﻿using System.Buffers;
+using System.Diagnostics;
+using Windows.Win32.Foundation;
 using Windows.Win32.UI.Accessibility;
 using Microsoft.Extensions.Logging;
-
-using static Windows.Win32.PInvoke;
-using System.Diagnostics;
-using System.Buffers;
 using ProcessReporterWin.Helper;
+using static Windows.Win32.PInvoke;
 
 namespace ProcessReporterWin.Services;
 
@@ -13,21 +12,18 @@ namespace ProcessReporterWin.Services;
 
 public class ProcessTraceService
 {
-    private HWINEVENTHOOK _hookHandle;
-
-    private readonly ILogger<ProcessTraceService> _logger;
-
     public delegate void FrontWindowChangeHandler(string windowTitle, string processName);
 
-    public event FrontWindowChangeHandler OnFrontWindowChanged;
+    private readonly ILogger<ProcessTraceService> _logger;
+    private readonly HWINEVENTHOOK _hookHandle;
 
     public ProcessTraceService(ILogger<ProcessTraceService> logger)
     {
         _logger = logger;
 
         _hookHandle = SetWinEventHook(
-            EVENT_SYSTEM_FOREGROUND, 
-            EVENT_SYSTEM_FOREGROUND, 
+            EVENT_SYSTEM_FOREGROUND,
+            EVENT_SYSTEM_FOREGROUND,
             HMODULE.Null,
             OnFrontWindowChange,
             0, 0,
@@ -41,12 +37,15 @@ public class ProcessTraceService
         }
     }
 
+    public event FrontWindowChangeHandler OnFrontWindowChanged;
+
     ~ProcessTraceService()
     {
         UnhookWinEvent(_hookHandle);
     }
 
-    private static void OnFrontWindowChange(HWINEVENTHOOK eventHook, uint @event, HWND hwnd, int idObject, int idChild, uint idEventThread, uint dwmsEventTime)
+    private static void OnFrontWindowChange(HWINEVENTHOOK eventHook, uint @event, HWND hwnd, int idObject, int idChild,
+        uint idEventThread, uint dwmsEventTime)
     {
         var currentWindow = GetForegroundWindow();
 
@@ -58,10 +57,7 @@ public class ProcessTraceService
 
         var service = ServiceHelper.GetService<ProcessTraceService>();
 
-        if (service?.OnFrontWindowChanged is not null)
-        {
-            service.OnFrontWindowChanged(windowTitle, processName);
-        }
+        if (service?.OnFrontWindowChanged is not null) service.OnFrontWindowChanged(windowTitle, processName);
     }
 
     private static unsafe uint GetProcessIdCore(HWND hWnd)

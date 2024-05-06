@@ -1,4 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:tb="https://notifyicon.com/"
@@ -9,8 +10,7 @@
             x:Name="ProcessReporter"
             ToolTipText="ProcessReporter"
             LeftClickCommand="{Binding ShowWindowCommand}"
-            NoLeftClickDelay="True"
-            >
+            NoLeftClickDelay="True">
             <FlyoutBase.ContextFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem Command="{Binding ShowWindowCommand}" Text="显示主程序" />
@@ -24,11 +24,13 @@
                 <StackLayout HorizontalOptions="Center" Spacing="10">
                     <FlexLayout>
                         <Label Text="Endpoint" VerticalOptions="Center" FlexLayout.Basis="80" Margin="0,0,10,0" />
-                        <Entry x:Name="endpointEntry" Placeholder="Endpoint URL" FlexLayout.Grow="1" Text="{Binding Endpoint, Mode=TwoWay}" />
+                        <Entry x:Name="endpointEntry" Placeholder="Endpoint URL" FlexLayout.Grow="1"
+                               Text="{Binding Endpoint, Mode=TwoWay}" />
                     </FlexLayout>
                     <FlexLayout>
                         <Label Text="API Key" VerticalOptions="Center" FlexLayout.Basis="80" Margin="0,0,10,0" />
-                        <Entry x:Name="keyEntry" Placeholder="API Key" FlexLayout.Grow="1" Text="{Binding ApiKey, Mode=TwoWay}" />
+                        <Entry x:Name="keyEntry" Placeholder="API Key" FlexLayout.Grow="1"
+                               Text="{Binding ApiKey, Mode=TwoWay}" />
                     </FlexLayout>
                     <!--<StackLayout Orientation="Horizontal">
                         <Button x:Name="saveButton" Clicked="saveButton_Clicked" Text="保存" HorizontalOptions="EndAndExpand" />
@@ -51,7 +53,7 @@
                                         Text="{Binding Key, Mode=TwoWay}" />
                                     <Label
                                         VerticalOptions="Center"
-                                        Text="→" 
+                                        Text="→"
                                         Padding="10" />
                                     <Label
                                         HorizontalOptions="FillAndExpand"
@@ -59,27 +61,27 @@
                                         IsVisible="{Binding NotEditing}"
                                         Text="{Binding Value}" />
                                     <Entry
-                                        HorizontalOptions="FillAndExpand" 
+                                        HorizontalOptions="FillAndExpand"
                                         Placeholder="Enter Value"
                                         IsVisible="{Binding Editing}"
                                         Text="{Binding Value, Mode=TwoWay}" />
-                                    
-                                    <Button 
-                                        Text="编辑" 
-                                        IsVisible="{Binding NotEditing}" 
-                                        Command="{Binding Path=BindingContext.EditReplaceRuleCommand, Source={Reference ReplaceRuleList}}" 
-                                        CommandParameter="{Binding .}"/>
-                                    <Button 
-                                        Text="保存" 
-                                        IsVisible="{Binding Editing}" 
-                                        Command="{Binding Path=BindingContext.SaveReplaceRuleCommand, Source={Reference ReplaceRuleList}}" 
-                                        CommandParameter="{Binding .}"/>
-                                    <Button 
-                                        Text="删除" 
-                                        TextColor="White" 
-                                        BackgroundColor="Red" 
-                                        Command="{Binding Path=BindingContext.DeleteReplaceRuleCommand, Source={Reference ReplaceRuleList}}" 
-                                        CommandParameter="{Binding .}"/>
+
+                                    <Button
+                                        Text="编辑"
+                                        IsVisible="{Binding NotEditing}"
+                                        Command="{Binding Path=BindingContext.EditReplaceRuleCommand, Source={Reference ReplaceRuleList}}"
+                                        CommandParameter="{Binding .}" />
+                                    <Button
+                                        Text="保存"
+                                        IsVisible="{Binding Editing}"
+                                        Command="{Binding Path=BindingContext.SaveReplaceRuleCommand, Source={Reference ReplaceRuleList}}"
+                                        CommandParameter="{Binding .}" />
+                                    <Button
+                                        Text="删除"
+                                        TextColor="White"
+                                        BackgroundColor="Red"
+                                        Command="{Binding Path=BindingContext.DeleteReplaceRuleCommand, Source={Reference ReplaceRuleList}}"
+                                        CommandParameter="{Binding .}" />
                                 </StackLayout>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
@@ -101,27 +103,27 @@
                                         IsVisible="{Binding NotEditing}"
                                         Text="{Binding KeyWord}" />
                                     <Entry
-                                        HorizontalOptions="FillAndExpand" 
+                                        HorizontalOptions="FillAndExpand"
                                         Placeholder="Enter Value"
                                         IsVisible="{Binding Editing}"
                                         Text="{Binding KeyWord, Mode=TwoWay}" />
 
-                                    <Button 
-                                        Text="编辑" 
-                                        IsVisible="{Binding NotEditing}" 
-                                        Command="{Binding Path=BindingContext.EditFilterRuleCommand, Source={Reference FilterRuleList}}" 
-                                        CommandParameter="{Binding .}"/>
-                                    <Button 
-                                        Text="保存" 
-                                        IsVisible="{Binding Editing}" 
-                                        Command="{Binding Path=BindingContext.SaveFilterRuleCommand, Source={Reference FilterRuleList}}" 
-                                        CommandParameter="{Binding .}"/>
-                                    <Button 
-                                        Text="删除" 
-                                        TextColor="White" 
-                                        BackgroundColor="Red" 
-                                        Command="{Binding Path=BindingContext.DeleteFilterRuleCommand, Source={Reference FilterRuleList}}" 
-                                        CommandParameter="{Binding .}"/>
+                                    <Button
+                                        Text="编辑"
+                                        IsVisible="{Binding NotEditing}"
+                                        Command="{Binding Path=BindingContext.EditFilterRuleCommand, Source={Reference FilterRuleList}}"
+                                        CommandParameter="{Binding .}" />
+                                    <Button
+                                        Text="保存"
+                                        IsVisible="{Binding Editing}"
+                                        Command="{Binding Path=BindingContext.SaveFilterRuleCommand, Source={Reference FilterRuleList}}"
+                                        CommandParameter="{Binding .}" />
+                                    <Button
+                                        Text="删除"
+                                        TextColor="White"
+                                        BackgroundColor="Red"
+                                        Command="{Binding Path=BindingContext.DeleteFilterRuleCommand, Source={Reference FilterRuleList}}"
+                                        CommandParameter="{Binding .}" />
                                 </StackLayout>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>

@@ -1,110 +1,109 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Diagnostics;
-using Windows.Media;
-using Windows.Media.Control;
+﻿using Windows.Media.Control;
+using Microsoft.Extensions.Logging;
 
-namespace ProcessReporterWin.Services
+namespace ProcessReporterWin.Services;
+
+public class MediaTraceService
 {
-    public class MediaTraceService
+    public delegate void MediaPlaybackChangeHandler(GlobalSystemMediaTransportControlsSessionMediaProperties properties,
+        GlobalSystemMediaTransportControlsSessionPlaybackStatus status, string processName);
+
+    private readonly ILogger<MediaTraceService> _logger;
+
+    private GlobalSystemMediaTransportControlsSessionManager? _manager;
+
+    private string _processName = string.Empty;
+
+    private GlobalSystemMediaTransportControlsSessionMediaProperties? _properties;
+
+    private GlobalSystemMediaTransportControlsSessionPlaybackStatus _status;
+
+    public MediaTraceService(ILogger<MediaTraceService> logger)
     {
-        private readonly ILogger<MediaTraceService> _logger;
+        _logger = logger;
+        _properties = null;
+        _status = GlobalSystemMediaTransportControlsSessionPlaybackStatus.Stopped;
+        InitManager();
+    }
 
-        public delegate void MediaPlaybackChangeHandler(GlobalSystemMediaTransportControlsSessionMediaProperties properties, GlobalSystemMediaTransportControlsSessionPlaybackStatus status, string processName);
+    public event MediaPlaybackChangeHandler OnMediaPlaybackChanged;
 
-        public event MediaPlaybackChangeHandler OnMediaPlaybackChanged;
-
-        private GlobalSystemMediaTransportControlsSessionMediaProperties? _properties;
-
-        private GlobalSystemMediaTransportControlsSessionPlaybackStatus _status;
-
-        private GlobalSystemMediaTransportControlsSessionManager? _manager;
-
-        private string _processName = string.Empty;
-
-        public MediaTraceService(ILogger<MediaTraceService> logger)
+    private async void InitManager()
+    {
+        _manager = await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
+        if (_manager is null)
         {
-            _logger = logger;
+            _logger.LogError("Failed to get MediaSessionManager");
+            return;
+        }
+
+        // 初始化触发一次
+        MediaSessionChanged(_manager, null);
+        _manager.CurrentSessionChanged += MediaSessionChanged;
+    }
+
+    private void MediaSessionChanged(GlobalSystemMediaTransportControlsSessionManager manager,
+        CurrentSessionChangedEventArgs? args)
+    {
+        var session = manager.GetCurrentSession();
+        if (session is null)
+        {
+            _processName = string.Empty;
             _properties = null;
             _status = GlobalSystemMediaTransportControlsSessionPlaybackStatus.Stopped;
-            InitManager();
+
+            _logger.LogWarning("Media session is null");
+            return;
         }
 
-        private async void InitManager()
+        // 初始化触发一次
+        MediaPropertiesChanged(session, null);
+        PlaybackInfoChanged(session, null);
+
+        _processName = session.SourceAppUserModelId;
+        session.MediaPropertiesChanged += MediaPropertiesChanged;
+        session.PlaybackInfoChanged += PlaybackInfoChanged;
+    }
+
+    private void PlaybackInfoChanged(GlobalSystemMediaTransportControlsSession sender,
+        PlaybackInfoChangedEventArgs? args)
+    {
+        var playbackInfo = sender.GetPlaybackInfo();
+        _status = playbackInfo.PlaybackStatus;
+
+        _logger.LogInformation("Play status change to {status}", playbackInfo.PlaybackStatus);
+
+        CallEvent();
+    }
+
+    private async void MediaPropertiesChanged(GlobalSystemMediaTransportControlsSession sender,
+        MediaPropertiesChangedEventArgs? args)
+    {
+        try
         {
-            _manager = await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
-            if (_manager is null)
+            var mediaProperities = await sender.TryGetMediaPropertiesAsync();
+            if (mediaProperities is null)
             {
-                _logger.LogError("Failed to get MediaSessionManager");
+                _logger.LogError("Media properties is null");
                 return;
             }
 
-            // 初始化触发一次
-            MediaSessionChanged(_manager, null);
-            _manager.CurrentSessionChanged += MediaSessionChanged;
-        }
+            _properties = mediaProperities;
 
-        private void MediaSessionChanged(GlobalSystemMediaTransportControlsSessionManager manager, CurrentSessionChangedEventArgs? args)
-        {
-            var session = manager.GetCurrentSession();
-            if (session is null)
-            {
-                _processName = string.Empty;
-                _properties = null;
-                _status = GlobalSystemMediaTransportControlsSessionPlaybackStatus.Stopped;
-
-                _logger.LogWarning("Media session is null");
-                return;
-            }
-            // 初始化触发一次
-            MediaPropertiesChanged(session, null);
-            PlaybackInfoChanged(session, null);
-
-            _processName = session.SourceAppUserModelId;
-            session.MediaPropertiesChanged += MediaPropertiesChanged;
-            session.PlaybackInfoChanged += PlaybackInfoChanged;
-        }
-
-        private void PlaybackInfoChanged(GlobalSystemMediaTransportControlsSession sender, PlaybackInfoChangedEventArgs? args)
-        {
-            var playbackInfo = sender.GetPlaybackInfo();
-            _status = playbackInfo.PlaybackStatus;
-
-            _logger.LogInformation("Play status change to {status}", playbackInfo.PlaybackStatus);
+            _logger.LogInformation("Playing {artist} - {title}", mediaProperities.Artist, mediaProperities.Title);
 
             CallEvent();
         }
-
-        private async void MediaPropertiesChanged(GlobalSystemMediaTransportControlsSession sender, MediaPropertiesChangedEventArgs? args)
+        catch (Exception)
         {
-            try
-            {
-                var mediaProperities = await sender.TryGetMediaPropertiesAsync();
-                if (mediaProperities is null)
-                {
-                    _logger.LogError("Media properties is null");
-                    return;
-                }
-                _properties = mediaProperities;
-
-                _logger.LogInformation("Playing {artist} - {title}", mediaProperities.Artist, mediaProperities.Title);
-
-                CallEvent();
-            }
-            catch (Exception)
-            {
-                _logger.LogWarning("Failed to get media properties");
-            }
+            _logger.LogWarning("Failed to get media properties");
         }
+    }
 
-        private void CallEvent()
-        {
-            if (_properties is not null)
-            {
-                if (OnMediaPlaybackChanged is not null)
-                {
-                    OnMediaPlaybackChanged(_properties, _status, _processName);
-                }
-            }
-        }
+    private void CallEvent()
+    {
+        if (_properties is not null)
+            if (OnMediaPlaybackChanged is not null)
+                OnMediaPlaybackChanged(_properties, _status, _processName);
     }
 }

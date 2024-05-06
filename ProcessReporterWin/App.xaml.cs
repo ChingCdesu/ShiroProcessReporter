@@ -1,15 +1,13 @@
-﻿using ProcessReporterWin.Services;
+﻿using ProcessReporterWin.Layouts;
 
-namespace ProcessReporterWin
+namespace ProcessReporterWin;
+
+public partial class App : Application
 {
-    public partial class App : Application
+    public App()
     {
+        InitializeComponent();
 
-        public App()
-        {
-            InitializeComponent();
-
-            MainPage = new AppShell();
-        }
+        MainPage = new Main();
     }
 }
