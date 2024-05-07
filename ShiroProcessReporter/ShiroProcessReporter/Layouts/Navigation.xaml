@@ -6,25 +6,75 @@
     xmlns:local="using:ShiroProcessReporter.Layouts"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:ShiroProcessReporter.Converters"
+    xmlns:helper="using:ShiroProcessReporter.Helper"
     mc:Ignorable="d">
-    <Grid>
-        <NavigationView Background="Transparent" IsBackEnabled="False" IsBackButtonVisible="Collapsed">
-            <NavigationView.Header>
-                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <Image Source="mx-apps://Resources/Images/mix_space.png" Width="300" Height="200" />
-                </StackPanel>
-            </NavigationView.Header>
-            <NavigationView.MenuItems>
-                <NavigationViewItem Content="Mix Space Endpoint">
 
-                </NavigationViewItem>
-                <NavigationViewItem Content="Replace Rules">
+    <Page.Resources>
+        <converters:AppThemeToImageSourceConverter
+            x:Key="ServerIconConverter"
+            LightImage="ms-appx:///Resources/Images/cloud-server-black.svg"
+            DarkImage="ms-appx:///Resources/Images/cloud-server-white.svg" />
+        <converters:AppThemeToImageSourceConverter
+            x:Key="ReplaceIconConverter"
+            LightImage="ms-appx:///Resources/Images/replace-black.svg"
+            DarkImage="ms-appx:///Resources/Images/replace-white.svg" />
+        <converters:AppThemeToImageSourceConverter
+            x:Key="FilterIconConverter"
+            LightImage="ms-appx:///Resources/Images/filter-black.svg"
+            DarkImage="ms-appx:///Resources/Images/filter-white.svg" />
+        <converters:AppThemeToImageSourceConverter
+            x:Key="LogsIconConverter"
+            LightImage="ms-appx:///Resources/Images/bug-black.svg"
+            DarkImage="ms-appx:///Resources/Images/bug-white.svg" />
+    </Page.Resources>
 
-                </NavigationViewItem>
-                <NavigationViewItem Content="Filter Rules">
-
-                </NavigationViewItem>
-            </NavigationView.MenuItems>
-        </NavigationView>
-    </Grid>
+    <NavigationView Background="Transparent" IsBackEnabled="False" IsBackButtonVisible="Collapsed" IsPaneToggleButtonVisible="False">
+        <NavigationView.PaneHeader>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Image Source="ms-appx:///Resources/Images/mix_space.png" Width="300" Height="200" />
+            </StackPanel>
+        </NavigationView.PaneHeader>
+        <NavigationView.MenuItems>
+            <NavigationViewItem Content="Mix Space Endpoint">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="{x:Bind helper:GlobalState.Instance.Theme, Converter={StaticResource ServerIconConverter}, Mode=OneWay}">
+                        <ImageIcon.RenderTransform>
+                            <ScaleTransform ScaleX="1.25" ScaleY="1.25" />
+                        </ImageIcon.RenderTransform>
+                    </ImageIcon>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Content="Replace Rules">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="{x:Bind helper:GlobalState.Instance.Theme, Converter={StaticResource ReplaceIconConverter}, Mode=OneWay}" >
+                        <ImageIcon.RenderTransform>
+                            <ScaleTransform ScaleX="1.1" ScaleY="1.1" />
+                        </ImageIcon.RenderTransform>
+                    </ImageIcon>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Content="Filter Rules">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="{x:Bind helper:GlobalState.Instance.Theme, Converter={StaticResource FilterIconConverter}, Mode=OneWay}">
+                        <ImageIcon.RenderTransform>
+                            <ScaleTransform ScaleX="1.1" ScaleY="1.1" />
+                        </ImageIcon.RenderTransform>
+                    </ImageIcon>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+            <NavigationViewItem Content="Logs">
+                <NavigationViewItem.Icon>
+                    <ImageIcon Source="{x:Bind helper:GlobalState.Instance.Theme, Converter={StaticResource LogsIconConverter}, Mode=OneWay}">
+                        <ImageIcon.RenderTransform>
+                            <ScaleTransform ScaleX="1.25" ScaleY="1.25" />
+                        </ImageIcon.RenderTransform>
+                    </ImageIcon>
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+        </NavigationView.MenuItems>
+        <NavigationView.Content>
+            <Frame x:Name="RouterView" />
+        </NavigationView.Content>
+    </NavigationView>
 </Page>

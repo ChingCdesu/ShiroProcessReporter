@@ -8,7 +8,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:components="using:ShiroProcessReporter.Components"
     xmlns:layouts="using:ShiroProcessReporter.Layouts"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Title="Process Reporter Settings">
 
     <Grid
         VerticalAlignment="Stretch"

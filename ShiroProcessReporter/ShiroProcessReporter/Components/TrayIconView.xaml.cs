@@ -10,6 +10,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Microsoft.UI.Xaml.Navigation;
+using ShiroProcessReporter.Helper;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,12 +30,6 @@ namespace ShiroProcessReporter.Components
         [ObservableProperty]
         private bool isWindowVisible;
 
-        [ObservableProperty]
-        private ApplicationTheme theme = Application.Current.RequestedTheme;
-
-        private static readonly ImageSource LightIcon = new BitmapImage(new Uri("ms-appx:///Resources/TrayIcon/flower.ico"));
-        private static readonly ImageSource DarkIcon = new BitmapImage(new Uri("ms-appx:///Resources/TrayIcon/flower-light.ico"));
-
         public TrayIconView()
         {
             this.InitializeComponent();
@@ -44,7 +39,7 @@ namespace ShiroProcessReporter.Components
 
         private void OnThemeChanged(object sender, object? args)
         {
-            Theme = Application.Current.RequestedTheme;
+            GlobalState.Instance.Theme = Application.Current.RequestedTheme;
         }
 
         [RelayCommand]

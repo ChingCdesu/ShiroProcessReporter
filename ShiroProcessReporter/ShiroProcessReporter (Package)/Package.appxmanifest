@@ -9,14 +9,14 @@
 
   <Identity
     Name="f8f2aa4b-ae72-4e86-b26e-e0e955af5ae2"
-    Publisher="CN=15257"
-    Version="1.0.0.0" />
+    Publisher="CN=ChingC"
+    Version="1.0.4.0" />
 
   <mp:PhoneIdentity PhoneProductId="f8f2aa4b-ae72-4e86-b26e-e0e955af5ae2" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>ShiroProcessReporter (Package)</DisplayName>
-    <PublisherDisplayName>15257</PublisherDisplayName>
+    <DisplayName>ShiroProcessReporter</DisplayName>
+    <PublisherDisplayName>ChingC</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 
@@ -34,8 +34,8 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="ShiroProcessReporter (Package)"
-        Description="ShiroProcessReporter (Package)"
+        DisplayName="ShiroProcessReporter"
+        Description="ShiroProcessReporter"
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">

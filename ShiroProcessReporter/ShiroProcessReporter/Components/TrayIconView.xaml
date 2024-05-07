@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tb="using:H.NotifyIcon"
     xmlns:converters="using:ShiroProcessReporter.Converters"
+    xmlns:helper="using:ShiroProcessReporter.Helper"
     d:DataContext="{d:DesignInstance Type=local:TrayIconView}"
     mc:Ignorable="d">
 
@@ -22,7 +23,7 @@
         x:Name="TrayIcon"
         x:FieldModifier="public"
         ContextMenuMode="SecondWindow"
-        IconSource="{x:Bind Theme, Converter={StaticResource AppThemeToImageSourceConverter}, Mode=OneWay}"
+        IconSource="{x:Bind Path=helper:GlobalState.Instance.Theme, Converter={StaticResource AppThemeToImageSourceConverter}, Mode=OneWay}"
         LeftClickCommand="{x:Bind ShowHideWindowCommand}"
         NoLeftClickDelay="True"
         ToolTipText="ShiroProcessReporter">
