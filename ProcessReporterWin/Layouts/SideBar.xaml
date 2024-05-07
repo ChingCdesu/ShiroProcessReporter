@@ -6,9 +6,11 @@
              xmlns:views="using:ProcessReporterWin.Views"
              xmlns:tb="https://notifyicon.com/"
              xmlns:layouts="using:ProcessReporterWin.Layouts"
+             xmlns:controls="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              x:Class="ProcessReporterWin.Layouts.SideBar"
-             Title="SideBar">
-    <VerticalStackLayout Spacing="10">
+             Title="SideBar"
+             Padding="20">
+    <VerticalStackLayout Spacing="20">
         <FlexLayout AlignItems="Center" AlignContent="Center">
             <Image Source="mix_space.png" WidthRequest="300" HeightRequest="200" />
         </FlexLayout>
@@ -21,7 +23,10 @@
             </CollectionView.ItemsSource>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="helper:SideBarItem">
-                    <Button Text="{Binding Title}" />
+                    <controls:StackPanel>
+                        <Label Text="{Binding Title}"
+                               HorizontalTextAlignment="Center" />
+                    </controls:StackPanel>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>

@@ -8,14 +8,14 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="e23f874b-79a0-461f-b079-6aba2d3b84cf"
+    Name="f8f2aa4b-ae72-4e86-b26e-e0e955af5ae2"
     Publisher="CN=15257"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="e23f874b-79a0-461f-b079-6aba2d3b84cf" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="f8f2aa4b-ae72-4e86-b26e-e0e955af5ae2" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>App1 (Package)</DisplayName>
+    <DisplayName>ShiroProcessReporter (Package)</DisplayName>
     <PublisherDisplayName>15257</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
@@ -34,8 +34,8 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="App1 (Package)"
-        Description="App1 (Package)"
+        DisplayName="ShiroProcessReporter (Package)"
+        Description="ShiroProcessReporter (Package)"
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">

@@ -3,34 +3,28 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <RootNamespace>App1</RootNamespace>
+    <RootNamespace>ShiroProcessReporter</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Platforms>x86;x64;ARM64</Platforms>
-    <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
     <UseWinUI>true</UseWinUI>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Resources\Splash\**" />
-    <Content Remove="Resources\Splash\**" />
-    <EmbeddedResource Remove="Resources\Splash\**" />
-    <None Remove="Resources\Splash\**" />
-    <Page Remove="Resources\Splash\**" />
-    <PRIResource Remove="Resources\Splash\**" />
+    <Content Include="Resources\TrayIcon\*.*" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Views\TrayIconView.xaml" />
+    <None Remove="Components\TrayIconView.xaml" />
+    <None Remove="Layouts\Navigation.xaml" />
+    <None Remove="NativeMethods.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Views\TrayIconView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <AdditionalFiles Include="NativeMethods.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-    <PackageReference Include="CommunityToolkit.WinUI" Version="7.1.2" />
-    <PackageReference Include="H.NotifyIcon" Version="2.0.131" />
+    <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
     <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.131" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
@@ -44,6 +38,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\Raw\" />
+    <Page Update="Components\TrayIconView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Layouts\Navigation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
 </Project>
