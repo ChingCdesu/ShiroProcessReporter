@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="ShiroProcessReporter.Views.EndpointSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ShiroProcessReporter.Views"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" Padding="20" Spacing="4">
+        <controls:SettingsCard
+            Header="Mix Space Server URL"
+            Description="Your Mix Space URL, eg. https://mxspace.mydomain.com/api/v2/fn/ps/update">
+            <controls:SettingsCard.HeaderIcon>
+                <SymbolIcon Symbol="Link" />
+            </controls:SettingsCard.HeaderIcon>
+            <Button Content="Edit" Style="{StaticResource AccentButtonStyle}" Click="EditEndpoint" />
+        </controls:SettingsCard>
+        <controls:SettingsCard
+            Header="Mix Space Server API Key"
+            Description="Your serverless key">
+            <controls:SettingsCard.HeaderIcon>
+                <SymbolIcon Symbol="Permissions" />
+            </controls:SettingsCard.HeaderIcon>
+            <Button Content="Edit" Style="{StaticResource AccentButtonStyle}" Click="EditApiKey" />
+        </controls:SettingsCard>
+        <controls:SettingsCard
+            Header="Have any problem?">
+            <controls:SettingsCard.HeaderIcon>
+                <SymbolIcon Symbol="Help" />
+            </controls:SettingsCard.HeaderIcon>
+            <controls:SettingsCard.Description>
+                <HyperlinkButton NavigateUri="https://mx-space.js.org/themes/shiro/extra#%E6%88%91%E7%9A%84%E5%8A%A8%E6%80%81" Content="Get more info from document" />
+            </controls:SettingsCard.Description>
+        </controls:SettingsCard>
+    </StackPanel>
+</Page>

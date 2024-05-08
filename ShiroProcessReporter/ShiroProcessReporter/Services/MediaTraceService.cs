@@ -3,7 +3,7 @@ using Windows.Media.Control;
 using Microsoft.Extensions.Logging;
 using ShiroProcessReporter.Helper;
 
-namespace ProcessReporterWin.Services;
+namespace ShiroProcessReporter.Services;
 
 public class MediaTraceService
 {

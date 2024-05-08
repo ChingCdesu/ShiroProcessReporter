@@ -29,14 +29,25 @@
             DarkImage="ms-appx:///Resources/Images/bug-white.svg" />
     </Page.Resources>
 
-    <NavigationView Background="Transparent" IsBackEnabled="False" IsBackButtonVisible="Collapsed" IsPaneToggleButtonVisible="False">
+    <NavigationView
+        x:Name="NavView"
+        Background="Transparent"
+        IsSettingsVisible="False"
+        IsBackEnabled="False"
+        IsBackButtonVisible="Collapsed"
+        IsPaneToggleButtonVisible="False"
+        Loaded="NavigationView_Loaded"
+        ItemInvoked="NavigationView_ItemInvoked">
         <NavigationView.PaneHeader>
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Image Source="ms-appx:///Resources/Images/mix_space.png" Width="300" Height="200" />
             </StackPanel>
         </NavigationView.PaneHeader>
+        <NavigationView.Header>
+            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="{x:Bind Title, Mode=OneWay}" />
+        </NavigationView.Header>
         <NavigationView.MenuItems>
-            <NavigationViewItem Content="Mix Space Endpoint">
+            <NavigationViewItem Tag="ShiroProcessReporter.Views.EndpointSettings" Content="Mix Space Endpoint">
                 <NavigationViewItem.Icon>
                     <ImageIcon Source="{x:Bind helper:GlobalState.Instance.Theme, Converter={StaticResource ServerIconConverter}, Mode=OneWay}">
                         <ImageIcon.RenderTransform>
@@ -45,7 +56,7 @@
                     </ImageIcon>
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem Content="Replace Rules">
+            <NavigationViewItem Tag="ShiroProcessReporter.Views.ReplaceRuleSettings" Content="Replace Rules">
                 <NavigationViewItem.Icon>
                     <ImageIcon Source="{x:Bind helper:GlobalState.Instance.Theme, Converter={StaticResource ReplaceIconConverter}, Mode=OneWay}" >
                         <ImageIcon.RenderTransform>
@@ -54,7 +65,7 @@
                     </ImageIcon>
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem Content="Filter Rules">
+            <!--<NavigationViewItem Tag="ShiroProcessReporter.Views.FilterRuleSettings" Content="Filter Rules">
                 <NavigationViewItem.Icon>
                     <ImageIcon Source="{x:Bind helper:GlobalState.Instance.Theme, Converter={StaticResource FilterIconConverter}, Mode=OneWay}">
                         <ImageIcon.RenderTransform>
@@ -63,7 +74,7 @@
                     </ImageIcon>
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <NavigationViewItem Content="Logs">
+            <NavigationViewItem Tag="ShiroProcessReporter.Views.LogViewer" Content="Logs">
                 <NavigationViewItem.Icon>
                     <ImageIcon Source="{x:Bind helper:GlobalState.Instance.Theme, Converter={StaticResource LogsIconConverter}, Mode=OneWay}">
                         <ImageIcon.RenderTransform>
@@ -71,10 +82,12 @@
                         </ImageIcon.RenderTransform>
                     </ImageIcon>
                 </NavigationViewItem.Icon>
-            </NavigationViewItem>
+            </NavigationViewItem>-->
         </NavigationView.MenuItems>
         <NavigationView.Content>
-            <Frame x:Name="RouterView" />
+            <ScrollViewer>
+                <Frame x:Name="RouterView" />
+            </ScrollViewer>
         </NavigationView.Content>
     </NavigationView>
 </Page>

@@ -3,15 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
+using Windows.Management.Core;
 
 namespace ShiroProcessReporter.Helper
 {
     public static class Preferences
     {
-        private static readonly Windows.Storage.ApplicationDataContainer LocalSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+        private static Windows.Storage.ApplicationDataContainer? LocalSettings;
+
+        private static void Initialize()
+        {
+            LocalSettings = ApplicationDataManager.CreateForPackageFamily(Package.Current.Id.FamilyName).LocalSettings;
+        }
 
         public static T? Get<T>(string key) where T : struct
         {
+            if (LocalSettings is null)
+            {
+                Initialize();
+            }
+
             if (string.IsNullOrWhiteSpace(key))
             {
                 return null;
@@ -29,6 +41,11 @@ namespace ShiroProcessReporter.Helper
 
         public static T Get<T>(string key, T defaultValue)
         {
+            if (LocalSettings is null)
+            {
+                Initialize();
+            }
+
             if (string.IsNullOrWhiteSpace(key))
             {
                 return defaultValue;
@@ -46,6 +63,11 @@ namespace ShiroProcessReporter.Helper
 
         public static void Set<T>(string key, T value)
         {
+            if (LocalSettings is null)
+            {
+                Initialize();
+            }
+
             if (string.IsNullOrWhiteSpace(key))
             {
                 return;

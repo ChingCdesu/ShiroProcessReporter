@@ -4,7 +4,7 @@ using ShiroProcessReporter.Helper;
 using ShiroProcessReporter;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ProcessReporterWin.Services;
+namespace ShiroProcessReporter.Services;
 
 public class TraceWorkerService
 {

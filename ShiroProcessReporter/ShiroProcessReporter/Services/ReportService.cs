@@ -9,8 +9,10 @@ using System.Collections.Generic;
 using Windows.ApplicationModel;
 using ShiroProcessReporter.Helper;
 using System.Linq;
+using ShiroProcessReporter.Models;
+using Windows.ApplicationModel.Appointments.AppointmentsProvider;
 
-namespace ProcessReporterWin.Services;
+namespace ShiroProcessReporter.Services;
 
 public class ReportService
 {
@@ -22,28 +24,29 @@ public class ReportService
     private readonly ILogger<ReportService> _logger;
     private readonly string ApiKeyDefault = string.Empty;
 
-    private readonly Dictionary<string, string> BuiltinReplaceRules = new()
+    private readonly List<ReplaceRule> BuiltinReplaceRules = new()
     {
-        { @"\.[Ee][Xx][Ee]", "" }, // 删除exe后缀
+        new ReplaceRule{ Original = @"\.[Ee][Xx][Ee]", Replacement = "" }, // 删除exe后缀
 
-        { "[Ee]xplorer", "explorer" },
+        new ReplaceRule{ Original = "[Ee]xplorer", Replacement = "explorer" },
 
-        { "msedge", "Microsoft Edge" },
-        { "WINWORD", "Microsoft Word" },
-        { "EXCEL", "Microsoft Excel" },
-        { "POWERPNT", "Microsoft PowerPoint" },
-        { "ONENOTE", "Microsoft OneNote" },
+        new ReplaceRule{ Original = "msedge", Replacement = "Microsoft Edge" },
+        new ReplaceRule{ Original = "WINWORD", Replacement = "Microsoft Word" },
+        new ReplaceRule{ Original = "EXCEL", Replacement = "Microsoft Excel" },
+        new ReplaceRule{ Original = "POWERPNT", Replacement = "Microsoft PowerPoint" },
+        new ReplaceRule{ Original = "ONENOTE", Replacement = "Microsoft OneNote" },
 
-        { "idea64", "IntelliJ IDEA" },
-        { "goland64", "GoLand" },
-        { "pycharm64", "PyCharm" },
+        new ReplaceRule{ Original = "idea64", Replacement = "IntelliJ IDEA" },
+        new ReplaceRule{ Original = "goland64", Replacement = "GoLand" },
+        new ReplaceRule{ Original = "pycharm64", Replacement = "PyCharm" },
 
-        { "GitHubDesktop", "GitHub Desktop" },
-        { "chrome", "Chrome" }
+        new ReplaceRule{ Original = "GitHubDesktop", Replacement = "GitHub Desktop" },
+        new ReplaceRule{ Original = "chrome", Replacement = "Chrome" },
     };
 
     private readonly string EndpointDefault = string.Empty;
     private readonly List<string> FilterRulesDefault = [];
+    private readonly List<ReplaceRule> ReplaceRulesDefault = new();
 
     private readonly string IdApiKey = "api_key";
 
@@ -52,7 +55,6 @@ public class ReportService
     private readonly string IdFilterRules = "filter_rules";
 
     private readonly string IdReplaceRules = "replace_rules";
-    private readonly Dictionary<string, string> ReplaceRulesDefault = new();
 
     private readonly string UserAgent
         = $"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 ProcessReporter/{Package.Current.Id.Version}";
@@ -62,7 +64,6 @@ public class ReportService
         _logger = AppLogger.Factory.CreateLogger<ReportService>();
         _httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
     }
-
 
     public string Endpoint
     {
@@ -76,10 +77,9 @@ public class ReportService
         set => Preferences.Set(IdApiKey, value);
     }
 
-    public Dictionary<string, string> ReplaceRules
+    public List<ReplaceRule> ReplaceRules
     {
-        get => JsonSerializer.Deserialize<Dictionary<string, string>>(Preferences.Get(IdReplaceRules, "{}")) ??
-               ReplaceRulesDefault;
+        get => JsonSerializer.Deserialize<List<ReplaceRule>>(Preferences.Get(IdReplaceRules, "[]")) ?? ReplaceRulesDefault;
         set => Preferences.Set(IdReplaceRules, JsonSerializer.Serialize(value));
     }
 
@@ -89,11 +89,7 @@ public class ReportService
         set => Preferences.Set(IdFilterRules, JsonSerializer.Serialize(value));
     }
 
-    private Dictionary<string, string> MergedReplaceRules =>
-        BuiltinReplaceRules
-            .Where(pair => !ReplaceRules.ContainsKey(pair.Key))
-            .Concat(ReplaceRules)
-            .ToDictionary(pair => pair.Key, pair => pair.Value);
+    private List<ReplaceRule> MergedReplaceRules => [.. BuiltinReplaceRules, .. ReplaceRules];
 
     public async void ReportProcess(string windowTitle, string processName)
     {
@@ -108,13 +104,13 @@ public class ReportService
             _logger.LogInformation("Api key is empty, skip report");
             return;
         }
-        
+
         var timeStamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
         foreach (var rule in MergedReplaceRules)
         {
-            var regex = new Regex(Regex.Unescape(rule.Key));
-            processName = regex.Replace(processName, rule.Value);
+            var regex = new Regex(Regex.Unescape(rule.Original));
+            processName = regex.Replace(processName, rule.Replacement);
         }
 
         try
@@ -161,7 +157,7 @@ public class ReportService
         GlobalSystemMediaTransportControlsSessionPlaybackStatus status, string processName)
     {
         if (status != GlobalSystemMediaTransportControlsSessionPlaybackStatus.Playing) return;
-        
+
         if (string.IsNullOrEmpty(Endpoint))
         {
             _logger.LogInformation("Endpoint is empty, skip report");
@@ -190,8 +186,8 @@ public class ReportService
 
         foreach (var rule in MergedReplaceRules)
         {
-            var regex = new Regex(Regex.Unescape(rule.Key));
-            processName = regex.Replace(processName, rule.Value);
+            var regex = new Regex(Regex.Unescape(rule.Original));
+            processName = regex.Replace(processName, rule.Replacement);
         }
 
         try

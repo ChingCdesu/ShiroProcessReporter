@@ -1,7 +1,8 @@
 ﻿using H.NotifyIcon;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
-using ProcessReporterWin.Services;
+using ShiroProcessReporter.Services;
+using ShiroProcessReporter.Components;
 using ShiroProcessReporter.Helper;
 using System;
 

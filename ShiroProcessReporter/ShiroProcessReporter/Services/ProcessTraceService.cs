@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using ShiroProcessReporter.Helper;
 
-namespace ProcessReporterWin.Services;
+namespace ShiroProcessReporter.Services;
 
 // Reference: https://github.com/walterlv/Walterlv.ForegroundWindowMonitor
 

@@ -7,7 +7,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
-using ProcessReporterWin.Services;
+using ShiroProcessReporter.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,13 +23,11 @@ namespace ShiroProcessReporter
 {
     public sealed partial class MainView : Window
     {
-        private readonly ReportService _reportService;
         private readonly TraceWorkerService _traceWorkerService;
 
         public MainView()
         {
             this.InitializeComponent();
-            _reportService = App.ServiceProvider.GetService<ReportService>();
             _traceWorkerService = App.ServiceProvider.GetService<TraceWorkerService>();
         }
     }
