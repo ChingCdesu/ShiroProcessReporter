@@ -22,7 +22,7 @@ public class ProcessTraceService
 
     public ProcessTraceService()
     {
-        _logger = AppLogger.Factory.CreateLogger<ProcessTraceService>();
+        _logger = AppLogHelper.Factory.CreateLogger<ProcessTraceService>();
 
         _hookHandle = SetWinEventHook(
             EVENT_SYSTEM_FOREGROUND,

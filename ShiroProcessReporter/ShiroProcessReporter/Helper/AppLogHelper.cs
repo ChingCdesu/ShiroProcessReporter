@@ -1,13 +1,16 @@
 ﻿using Microsoft.Extensions.Logging;
+using ShiroProcessReporter.Extensions;
+using ShiroProcessReporter.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ShiroProcessReporter.Helper
 {
-    public class AppLogger
+    public class AppLogHelper
     {
         public static ILoggerFactory Factory { get; set; }
 
@@ -17,7 +20,8 @@ namespace ShiroProcessReporter.Helper
             {
                 builder
                     .AddDebug()
-                    .AddConsole();
+                    .AddConsole()
+                    .AddMemory();
             });
         }
     }

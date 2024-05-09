@@ -3,7 +3,8 @@
     x:Class="ShiroProcessReporter.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ShiroProcessReporter">
+    xmlns:local="using:ShiroProcessReporter"
+    xmlns:helper="using:ShiroProcessReporter.Helper">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -11,6 +12,7 @@
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
             <!-- Other app resources here -->
+            <helper:GlobalStateWrapper x:Key="globalStateWrapper"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

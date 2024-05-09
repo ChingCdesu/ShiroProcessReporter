@@ -18,7 +18,7 @@ namespace ShiroProcessReporter
         {
             this.InitializeComponent();
 
-            AppLogger.ConfigureLogging();
+            AppLogHelper.ConfigureLogging();
         }
 
         private void ConfigureService(IServiceCollection services)
@@ -31,6 +31,7 @@ namespace ShiroProcessReporter
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
+            Preferences.Initialize();
             var services = new ServiceCollection();
             ConfigureService(services);
             ServiceProvider = services.BuildServiceProvider();

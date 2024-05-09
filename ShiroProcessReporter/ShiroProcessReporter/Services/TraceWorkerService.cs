@@ -18,7 +18,7 @@ public class TraceWorkerService
 
     public TraceWorkerService()
     {
-        _logger = AppLogger.Factory.CreateLogger<TraceWorkerService>();
+        _logger = AppLogHelper.Factory.CreateLogger<TraceWorkerService>();
         _mediaTraceService = App.ServiceProvider.GetService<MediaTraceService>();
         _processTraceService = App.ServiceProvider.GetService<ProcessTraceService>();
         _reportService = App.ServiceProvider.GetService<ReportService>();

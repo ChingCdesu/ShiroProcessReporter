@@ -15,13 +15,14 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using WinUIEx;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
 namespace ShiroProcessReporter
 {
-    public sealed partial class MainView : Window
+    public sealed partial class MainView : WindowEx
     {
         private readonly TraceWorkerService _traceWorkerService;
 
@@ -29,6 +30,26 @@ namespace ShiroProcessReporter
         {
             this.InitializeComponent();
             _traceWorkerService = App.ServiceProvider.GetService<TraceWorkerService>();
+
+            ExtendsContentIntoTitleBar = true;
+            SetTitleBar(titleBar);
+            var title = "Process Reporter Settings";
+            Title = title;
+            AppTitleTextBlock.Text = title;
+            Activated += MainWindow_Activated;
         }
+
+        private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+        {
+            if (args.WindowActivationState == WindowActivationState.Deactivated)
+            {
+                AppTitleTextBlock.Foreground = (SolidColorBrush)App.Current.Resources["WindowCaptionForegroundDisabled"];
+            }
+            else
+            {
+                AppTitleTextBlock.Foreground = (SolidColorBrush)App.Current.Resources["WindowCaptionForeground"];
+            }
+        }
+
     }
 }

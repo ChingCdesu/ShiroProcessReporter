@@ -12,7 +12,7 @@ namespace ShiroProcessReporter.Helper
     {
         private static Windows.Storage.ApplicationDataContainer? LocalSettings;
 
-        private static void Initialize()
+        public static void Initialize()
         {
             LocalSettings = ApplicationDataManager.CreateForPackageFamily(Package.Current.Id.FamilyName).LocalSettings;
         }

@@ -22,7 +22,7 @@ public class MediaTraceService
 
     public MediaTraceService()
     {
-        _logger = AppLogger.Factory.CreateLogger<MediaTraceService>();
+        _logger = AppLogHelper.Factory.CreateLogger<MediaTraceService>();
         _properties = null;
         _status = GlobalSystemMediaTransportControlsSessionPlaybackStatus.Stopped;
         InitManager();

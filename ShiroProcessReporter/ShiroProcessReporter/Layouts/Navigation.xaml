@@ -65,7 +65,7 @@
                     </ImageIcon>
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
-            <!--<NavigationViewItem Tag="ShiroProcessReporter.Views.FilterRuleSettings" Content="Filter Rules">
+            <NavigationViewItem Tag="ShiroProcessReporter.Views.FilterRuleSettings" Content="Filter Rules">
                 <NavigationViewItem.Icon>
                     <ImageIcon Source="{x:Bind helper:GlobalState.Instance.Theme, Converter={StaticResource FilterIconConverter}, Mode=OneWay}">
                         <ImageIcon.RenderTransform>
@@ -82,12 +82,10 @@
                         </ImageIcon.RenderTransform>
                     </ImageIcon>
                 </NavigationViewItem.Icon>
-            </NavigationViewItem>-->
+            </NavigationViewItem>
         </NavigationView.MenuItems>
         <NavigationView.Content>
-            <ScrollViewer>
-                <Frame x:Name="RouterView" />
-            </ScrollViewer>
+            <Frame x:Name="RouterView" />
         </NavigationView.Content>
     </NavigationView>
 </Page>

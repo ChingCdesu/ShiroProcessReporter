@@ -115,6 +115,7 @@ namespace ShiroProcessReporter.Views
                 if (index > 0)
                 {
                     ReplaceRules.Move(index, index - 1);
+                    _reportService!.ReplaceRules = [.. _replaceRules];
                 }
             }
         }
@@ -127,6 +128,7 @@ namespace ShiroProcessReporter.Views
                 if (index < ReplaceRules.Count - 1)
                 {
                     ReplaceRules.Move(index, index + 1);
+                    _reportService!.ReplaceRules = [.. _replaceRules];
                 }
             }
         }

@@ -45,8 +45,8 @@ public class ReportService
     };
 
     private readonly string EndpointDefault = string.Empty;
-    private readonly List<string> FilterRulesDefault = [];
-    private readonly List<ReplaceRule> ReplaceRulesDefault = new();
+    private readonly List<FilterRule> FilterRulesDefault = [];
+    private readonly List<ReplaceRule> ReplaceRulesDefault = [];
 
     private readonly string IdApiKey = "api_key";
 
@@ -61,7 +61,7 @@ public class ReportService
 
     public ReportService()
     {
-        _logger = AppLogger.Factory.CreateLogger<ReportService>();
+        _logger = AppLogHelper.Factory.CreateLogger<ReportService>();
         _httpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
     }
 
@@ -83,9 +83,9 @@ public class ReportService
         set => Preferences.Set(IdReplaceRules, JsonSerializer.Serialize(value));
     }
 
-    public List<string> FilterRules
+    public List<FilterRule> FilterRules
     {
-        get => JsonSerializer.Deserialize<List<string>>(Preferences.Get(IdFilterRules, "[]")) ?? FilterRulesDefault;
+        get => JsonSerializer.Deserialize<List<FilterRule>>(Preferences.Get(IdFilterRules, "[]")) ?? FilterRulesDefault;
         set => Preferences.Set(IdFilterRules, JsonSerializer.Serialize(value));
     }
 
@@ -106,6 +106,16 @@ public class ReportService
         }
 
         var timeStamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+        foreach (var rule in FilterRules)
+        {
+            var regex = new Regex(Regex.Unescape(rule.Original));
+            if (regex.IsMatch(processName))
+            {
+                _logger.LogInformation("Process {process} matched filter rule {rule}", processName, rule.Original);
+                return;
+            }
+        }
 
         foreach (var rule in MergedReplaceRules)
         {
@@ -183,6 +193,16 @@ public class ReportService
         }
 
         var timeStamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+        foreach (var rule in FilterRules)
+        {
+            var regex = new Regex(Regex.Unescape(rule.Original));
+            if (regex.IsMatch(processName))
+            {
+                _logger.LogInformation("Process {process} matched filter rule {rule}", processName, rule.Original);
+                return;
+            }
+        }
 
         foreach (var rule in MergedReplaceRules)
         {
