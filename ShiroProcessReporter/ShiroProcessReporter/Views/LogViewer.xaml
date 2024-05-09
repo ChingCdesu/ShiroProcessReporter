@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="ShiroProcessReporter.Views.LogViewer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ShiroProcessReporter.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:helper="using:ShiroProcessReporter.Helper"
+    xmlns:models="using:ShiroProcessReporter.Models"
+    xmlns:converters="using:ShiroProcessReporter.Converters"
+    d:DataContext="{d:DesignInstance Type=local:LogViewer}"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <Page.Resources>
+        <converters:LogLevelToColorConverter x:Key="LogLevelToColorConverter" />
+    </Page.Resources>
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="20" RowSpacing="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="4" Grid.Row="0">
+            <ToggleButton
+                Height="32"
+                Content="{ui:FontIcon Glyph=&#xE74B;,FontSize=16}"
+                Background="Transparent"
+                BorderBrush="Transparent"
+                Checked="FollowToggleButton_Checked"
+                Unchecked="FollowToggleButton_Unchecked">
+                <ToolTipService.ToolTip>
+                    <ToolTip Content="Follow" />
+                </ToolTipService.ToolTip>
+            </ToggleButton>
+            <Button
+                Height="32"
+                Content="{ui:FontIcon Glyph=&#xE74D;,FontSize=16}"
+                Background="Transparent"
+                BorderBrush="Transparent">
+                <ToolTipService.ToolTip>
+                    <ToolTip Content="Clean all logs" />
+                </ToolTipService.ToolTip>
+            </Button>
+        </StackPanel>
+        <ListView
+            Grid.Row="1"
+            x:Name="LogListView"
+            ItemsSource="{Binding Logs, Source={StaticResource globalStateWrapper}, Mode=OneWay}">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:LogEntry">
+                    <TextBlock
+                        FontFamily="'Cascadia Mono', monospace"
+                        Text="{Binding Message}"
+                        Foreground="{Binding LogLevel, Converter={StaticResource LogLevelToColorConverter}}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>

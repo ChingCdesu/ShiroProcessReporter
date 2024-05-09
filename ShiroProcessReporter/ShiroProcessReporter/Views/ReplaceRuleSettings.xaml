@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="ShiroProcessReporter.Views.ReplaceRuleSettings"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ShiroProcessReporter.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tkconverters="using:CommunityToolkit.WinUI.Converters"
+    xmlns:models="using:ShiroProcessReporter.Models"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    mc:Ignorable="d"
+    Background="Transparent">
+
+    <Page.Resources>
+        <tkconverters:BoolToVisibilityConverter
+            x:Key="BoolToInvertedVisibilityConverter"
+            FalseValue="Visible"
+            TrueValue="Collapsed" />
+    </Page.Resources>
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="20" RowSpacing="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        
+        <ContentDialog
+            x:Name="ReplaceRuleDialog"
+            PrimaryButtonText="Save"
+            SecondaryButtonText="Cancel"
+            DefaultButton="Primary"
+            IsPrimaryButtonEnabled="{Binding ReplaceRuleVaild, Mode=TwoWay}">
+            <ContentDialog.DataContext>
+                <models:ReplaceRule />
+            </ContentDialog.DataContext>
+            <StackPanel Spacing="8">
+                <TextBlock Text="Pattern" />
+                <TextBox
+                    IsSpellCheckEnabled="False"
+                    Text="{Binding Original, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.Description>
+                        <StackPanel
+                            Margin="0,4"
+                            Orientation="Horizontal"
+                            Spacing="4"
+                            Visibility="{Binding IsOriginalVaild, Converter={StaticResource BoolToInvertedVisibilityConverter}}">
+                            <FontIcon
+                                    Margin="0,0,0,0"
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    FontSize="14"
+                                    Foreground="{ThemeResource SystemFillColorCautionBrush}"
+                                    Glyph="&#xE7BA;" />
+                            <TextBlock Text="Pattern must be a valid regex expression" />
+                        </StackPanel>
+                    </TextBox.Description>
+                </TextBox>
+                <TextBlock Text="Replace to" />
+                <TextBox
+                    IsSpellCheckEnabled="False"
+                    Text="{Binding Replacement, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+        </ContentDialog>
+
+        <ContentDialog
+            x:Name="DeleteDialog"
+            PrimaryButtonText="Sure"
+            SecondaryButtonText="Cancel"
+            PrimaryButtonCommand="{x:Bind DeleteCommand}"
+            PrimaryButtonStyle="{StaticResource AccentButtonStyle}">
+            <TextBlock Text="Are you sure delete this rule?" />
+        </ContentDialog>
+
+        <StackPanel HorizontalAlignment="Right" Grid.Row="0">
+            <Button Click="{x:Bind OpenNewDialogAsync}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon
+                        FontSize="16"
+                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                        Glyph="&#xe710;" />
+                    <TextBlock Text="Add new" />
+                </StackPanel>
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="N" Modifiers="Control" />
+                </Button.KeyboardAccelerators>
+            </Button>
+        </StackPanel>
+        <ScrollView Grid.Row="1">
+            <ListView
+                x:Name="ReplaceRuleListView"
+                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="{StaticResource OverlayCornerRadius}"
+                IsItemClickEnabled="True"
+                ItemClick="ListView_ItemClick"
+                ItemsSource="{x:Bind ReplaceRules, Mode=TwoWay}"
+                RightTapped="ListView_RightTapped"
+                SelectedItem="{x:Bind Selected, Mode=TwoWay}">
+                <ListView.Header>
+                    <Grid Background="Transparent" ColumnSpacing="8" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="16,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="64" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Pattern" Grid.Column="0" TextAlignment="Center" FontWeight="Bold" />
+                        <TextBlock Text="Replace to" Grid.Column="2" TextAlignment="Center" FontWeight="Bold" />
+                    </Grid>
+                </ListView.Header>
+                <ListView.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="Edit" Icon="Edit" Click="Edit_Click"/>
+                        <MenuFlyoutItem Text="Duplicate" Click="Duplicate_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xF413;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem Text="MoveUp" Click="ReorderButtonUp_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE74A;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Text="MoveDown" Click="ReorderButtonDown_Click">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE74B;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem Text="Delete" Icon="Delete" Click="Delete_Click" />
+                    </MenuFlyout>
+                </ListView.ContextFlyout>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ReplaceRule">
+                        <Grid Background="Transparent" ColumnSpacing="8" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="64" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding Original, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center" />
+                            <Viewbox Grid.Column="1" Height="12" Width="12" Margin="0,4,0,0">
+                                <SymbolIcon Symbol="Forward" />
+                            </Viewbox>
+                            <TextBlock Grid.Column="2" Text="{Binding Replacement, Mode=OneWay}" VerticalAlignment="Center" TextAlignment="Center" />
+                            <Button
+                                Grid.Column="3"
+                                Height="32"
+                                Content="{ui:FontIcon Glyph=&#xE74D;,FontSize=16}"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                Click="Delete_Click"
+                                CommandParameter="{x:Bind (models:ReplaceRule)}"
+                                GotFocus="Item_GotFocus"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </ScrollView>
+    </Grid>
+</Page>
