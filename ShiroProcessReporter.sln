@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProcessReporterWin", "ProcessReporterWin\ProcessReporterWin.csproj", "{2AC50C5C-39B7-4E49-BECC-5331343EA959}"
-EndProject
 Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "ShiroProcessReporter (Package)", "ShiroProcessReporter\ShiroProcessReporter (Package)\ShiroProcessReporter (Package).wapproj", "{AC822E31-7C2D-4F32-884B-DB0B5FDDA414}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShiroProcessReporter", "ShiroProcessReporter\ShiroProcessReporter\ShiroProcessReporter.csproj", "{A3B50604-0EAA-45F4-9991-39BD878E65A0}"
@@ -21,24 +19,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Debug|x64.Build.0 = Debug|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Debug|x86.Build.0 = Debug|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Release|Any CPU.Deploy.0 = Release|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Release|ARM64.Build.0 = Release|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Release|x64.ActiveCfg = Release|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Release|x64.Build.0 = Release|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Release|x86.ActiveCfg = Release|Any CPU
-		{2AC50C5C-39B7-4E49-BECC-5331343EA959}.Release|x86.Build.0 = Release|Any CPU
 		{AC822E31-7C2D-4F32-884B-DB0B5FDDA414}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{AC822E31-7C2D-4F32-884B-DB0B5FDDA414}.Debug|Any CPU.Build.0 = Debug|x64
 		{AC822E31-7C2D-4F32-884B-DB0B5FDDA414}.Debug|Any CPU.Deploy.0 = Debug|x64
