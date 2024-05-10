@@ -15,15 +15,13 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using ShiroProcessReporter.Helper;
 
 namespace ShiroProcessReporter.Views
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
+    [ObservableObject]
     public sealed partial class EndpointSettings : Page
     {
         private readonly ReportService _reportService;
@@ -34,52 +32,34 @@ namespace ShiroProcessReporter.Views
             _reportService = App.ServiceProvider!.GetService<ReportService>()!;
         }
 
+        [RelayCommand]
+        private void UpdateEndpoint()
+        {
+            var context = EndpointEditDialog.DataContext as DataContextWrapper<string>;
+            _reportService!.Endpoint = context.Value;
+        }
+
+        [RelayCommand]
+        private void UpdateApiKey()
+        {
+            var context = EndpointEditDialog.DataContext as DataContextWrapper<string>;
+            _reportService!.ApiKey = context.Value;
+        }
+
         private async void EditEndpoint(object sender, RoutedEventArgs e)
         {
-            var content = new OneLineInputDialog();
-            content.Input.Text = _reportService?.Endpoint;
-
-            var dialog = new ContentDialog
-            {
-                XamlRoot = this.XamlRoot,
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-                Width = 400,
-                Title = "Edit Endpoint",
-                PrimaryButtonText = "Save",
-                SecondaryButtonText = "Cancel",
-                DefaultButton = ContentDialogButton.Primary,
-                Content = content
-            };
-
-            var result = await dialog.ShowAsync();
-            if (result.Equals(ContentDialogResult.Primary))
-            {
-                _reportService!.Endpoint = content.Input.Text;
-            }
+            EndpointEditDialog.DataContext = new DataContextWrapper<string>(_reportService!.Endpoint);
+            EndpointEditDialog.Title = "Edit Endpoint";
+            EndpointEditDialog.PrimaryButtonCommand = UpdateEndpointCommand;
+            await EndpointEditDialog.ShowAsync();
         }
 
         private async void EditApiKey(object sender, RoutedEventArgs e)
         {
-            var content = new OneLineInputDialog();
-            content.Input.Text = _reportService?.ApiKey;
-
-            var dialog = new ContentDialog
-            {
-                XamlRoot = this.XamlRoot,
-                Style = Application.Current.Resources["DefaultContentDialogStyle"] as Style,
-                Width = 400,
-                Title = "Edit ApiKey",
-                PrimaryButtonText = "Save",
-                SecondaryButtonText = "Cancel",
-                DefaultButton = ContentDialogButton.Primary,
-                Content = content
-            };
-
-            var result = await dialog.ShowAsync();
-            if (result.Equals(ContentDialogResult.Primary))
-            {
-                _reportService!.ApiKey = content.Input.Text;
-            }
+            EndpointEditDialog.DataContext = new DataContextWrapper<string>(_reportService!.Endpoint);
+            EndpointEditDialog.Title = "Edit API Key";
+            EndpointEditDialog.PrimaryButtonCommand = UpdateApiKeyCommand;
+            await EndpointEditDialog.ShowAsync();
         }
     }
 }

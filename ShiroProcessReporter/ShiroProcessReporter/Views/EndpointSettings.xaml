@@ -5,12 +5,22 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ShiroProcessReporter.Views"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:helpers="using:ShiroProcessReporter.Helper"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="Transparent">
 
     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Top" Padding="20" Spacing="4">
+        <ContentDialog
+            x:Name="EndpointEditDialog"
+            PrimaryButtonText="Save"
+            SecondaryButtonText="Cancel"
+            DefaultButton="Primary">
+            <ContentDialog.DataContext />
+            <TextBox x:Name="DialogInput" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </ContentDialog>
+        
         <controls:SettingsCard
             Header="Mix Space Server URL"
             Description="Your Mix Space URL, eg. https://mxspace.mydomain.com/api/v2/fn/ps/update">

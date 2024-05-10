@@ -15,8 +15,6 @@
     <Content Include="Resources\Images\*.*" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Components\OneLineInputDialog.xaml" />
-    <None Remove="Components\ReplaceRuleEditDialog.xaml" />
     <None Remove="Components\TrayIconView.xaml" />
     <None Remove="Layouts\Navigation.xaml" />
     <None Remove="NativeMethods.txt" />
@@ -51,18 +49,6 @@
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.3233" />
     <PackageReference Include="WinUIEx" Version="2.3.4" />
     <Manifest Include="$(ApplicationManifest)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Components\ReplaceRuleEditDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Update="Components\OneLineInputDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
 
   <ItemGroup>

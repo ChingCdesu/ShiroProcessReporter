@@ -58,6 +58,10 @@ namespace ShiroProcessReporter.Layouts
             Type preNavPageType = RouterView.CurrentSourcePageType;
             if (navPageType is not null && !Type.Equals(preNavPageType, navPageType))
             {
+                if (RouterView.Content is Page currentPage && currentPage is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
                 RouterView.Navigate(navPageType, null, transitionInfo);
                 Title = (NavView.SelectedItem as NavigationViewItem).Content.ToString();
             }
