@@ -10,7 +10,7 @@
   <Identity
     Name="f8f2aa4b-ae72-4e86-b26e-e0e955af5ae2"
     Publisher="CN=ChingC"
-    Version="1.0.4.0" />
+    Version="2.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="f8f2aa4b-ae72-4e86-b26e-e0e955af5ae2" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -39,7 +39,7 @@
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">
-        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png" />
+        <uap:DefaultTile Wide310x150Logo="Images\Wide310x150Logo.png"  Square71x71Logo="Images\SmallTile.png" Square310x310Logo="Images\LargeTile.png"/>
         <uap:SplashScreen Image="Images\SplashScreen.png" />
       </uap:VisualElements>
     </Application>
