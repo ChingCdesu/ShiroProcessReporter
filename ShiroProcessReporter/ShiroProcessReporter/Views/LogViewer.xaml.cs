@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ShiroProcessReporter.Helper;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace ShiroProcessReporter.Views
 {
@@ -34,14 +35,19 @@ namespace ShiroProcessReporter.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-
+            GlobalState.Instance.LogViewDispatcherQueue = DispatcherQueue;
             GlobalState.Instance.Logs.CollectionChanged += Logs_CollectionChanged;
+            LogListView.SetBinding(
+                ItemsControl.ItemsSourceProperty,
+                new Binding() { Source = GlobalState.Instance.Logs, Mode = BindingMode.OneWay});
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            base.OnNavigatedFrom(e);
+            LogListView.ClearValue(ItemsControl.ItemsSourceProperty);
             GlobalState.Instance.Logs.CollectionChanged -= Logs_CollectionChanged;
+            GlobalState.Instance.LogViewDispatcherQueue = null;
+            base.OnNavigatedFrom(e);
         }
 
         private void Logs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -66,10 +72,13 @@ namespace ShiroProcessReporter.Views
         private void ScrollToBottom()
         {
             var scrollViewer = GetScrollViewer(LogListView);
-            if (scrollViewer != null)
+            if (scrollViewer is not null)
             {
-                var scrollableHeight = scrollViewer.ScrollableHeight;
-                scrollViewer.ChangeView(null, scrollableHeight, null, true);
+                DispatcherQueue.TryEnqueue(() =>
+                {
+                    var scrollableHeight = scrollViewer.ScrollableHeight;
+                    scrollViewer.ChangeView(null, scrollableHeight, null, true);
+                });
             }
         }
 

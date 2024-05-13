@@ -23,20 +23,35 @@ namespace ShiroProcessReporter.Loggers
             Exception? exception,
             Func<TState, Exception?, string> formatter)
         {
-            DispatcherQueue.GetForCurrentThread().TryEnqueue(() =>
+            var dispatcher = GlobalState.Instance.LogViewDispatcherQueue;
+
+            var entry = new LogEntry
             {
-                GlobalState.Instance.Logs.Add(new LogEntry
+                LogLevel = logLevel,
+                Message = $"[{DateTime.Now} {logLevel}]  {formatter(state, exception)}",
+            };
+
+            if (dispatcher == null)
+            {
+                AddLog(entry);
+            }
+            else
+            {
+                dispatcher.TryEnqueue(() =>
                 {
-                    LogLevel = logLevel,
-                    Message = $"[{DateTime.Now} {logLevel}]  {formatter(state, exception)}",
+                    AddLog(entry);
                 });
+            }
+        }
 
-                while (GlobalState.Instance.Logs.Count > 1000)
-                {
-                    GlobalState.Instance.Logs.RemoveAt(0);
-                }
-            });
+        private void AddLog(LogEntry entry)
+        {
+            GlobalState.Instance.Logs.Add(entry);
 
+            while (GlobalState.Instance.Logs.Count > 1000)
+            {
+                GlobalState.Instance.Logs.RemoveAt(0);
+            }
         }
     }
 }

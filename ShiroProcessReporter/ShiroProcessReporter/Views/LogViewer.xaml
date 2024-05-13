@@ -47,8 +47,7 @@
         </StackPanel>
         <ListView
             Grid.Row="1"
-            x:Name="LogListView"
-            ItemsSource="{Binding Logs, Source={StaticResource globalStateWrapper}, Mode=OneWay}">
+            x:Name="LogListView">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel />

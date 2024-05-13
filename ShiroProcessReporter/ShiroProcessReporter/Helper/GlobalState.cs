@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.UI.Dispatching;
 
 namespace ShiroProcessReporter.Helper
 {
@@ -17,6 +18,8 @@ namespace ShiroProcessReporter.Helper
 
         [ObservableProperty]
         private ObservableCollection<LogEntry> _logs = [];
+
+        public DispatcherQueue? LogViewDispatcherQueue { get; set; }
 
         private static GlobalState? _instance;
         public static GlobalState Instance => _instance ??= new GlobalState();
