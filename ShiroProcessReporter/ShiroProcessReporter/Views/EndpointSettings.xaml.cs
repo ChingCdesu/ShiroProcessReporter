@@ -56,7 +56,7 @@ namespace ShiroProcessReporter.Views
 
         private async void EditApiKey(object sender, RoutedEventArgs e)
         {
-            EndpointEditDialog.DataContext = new DataContextWrapper<string>(_reportService!.Endpoint);
+            EndpointEditDialog.DataContext = new DataContextWrapper<string>(_reportService!.ApiKey);
             EndpointEditDialog.Title = "Edit API Key";
             EndpointEditDialog.PrimaryButtonCommand = UpdateApiKeyCommand;
             await EndpointEditDialog.ShowAsync();
